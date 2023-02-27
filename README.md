@@ -9,7 +9,7 @@ The inspiration for Vectorize comes from Gérard Bouteau, a long time Rhino user
 
 ### Details
 
-Vectorize is based off the famous [Potrace](http://potrace.sourceforge.net/) by Peter Selinger, whose application transforms a bitmap into a soft, scalable image made up of vectors. The plug-in uses a C# translation named [CsPotrace](https://www.drawing3d.de/Downloads.aspx) written by Wolfgang Nagl.
+Vectorize is based off the famous [Potrace](http://potrace.sourceforge.net/) by Peter Selinger, whose application transforms a bitmap into a soft, scalable image made up of vectors. 
 
 ### Prerequisites
 
@@ -24,7 +24,7 @@ Note, the solution uses the [RhinoCommon](https://www.nuget.org/packages/rhinoco
 1. Clone the repository. At a command prompt, enter the following command:
 
 ```
-git clone https://github.com/dalefugier/Vectorize
+git clone https://github.com/dalefugier/VectorizeNew
 ```
 
 2. Open the `Vectorize.sln` solution file in Visual Studio.
