@@ -410,8 +410,17 @@ namespace VectorizeCommon
             for (var x = 0; x < bitmap.Width; x++)
             {
               var pixel = bitmapData.GetPixel(x, y);
-              var gray = (int)((pixel.Rb * 0.3) + (pixel.Gb * 0.59) + (pixel.Bb * 0.11));
-              PutPixel(x, y, gray <= t);
+              if (pixel.A <= 0.0)
+              {
+                // Fully transparent = white
+                PutPixel(x, y, false);
+              }
+              else
+              {
+                // Convert to gray (your favorite equation here)
+                var gray = (int)((pixel.Rb * 0.3) + (pixel.Gb * 0.59) + (pixel.Bb * 0.11));
+                PutPixel(x, y, gray <= t);
+              }
             }
           }
 
