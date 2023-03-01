@@ -379,20 +379,20 @@ namespace VectorizeCommon
     /// Constructs a PotraceBitmap from an Eto.Drawing.Bitmap.
     /// </summary>
     /// <param name="bitmap">The Eto Bitmap.</param>
-    /// <param name="threshold">
+    /// <param name="brightnessThreshold">
     /// Thresholding parameter, used to weight colors to either black or white.
     /// The range is from 0.0 to 1.0.
     /// </param>
     /// <exception cref="ArgumentNullException"></exception>
-    public PotraceBitmap(Eto.Drawing.Bitmap bitmap, double threshold)
+    public PotraceBitmap(Eto.Drawing.Bitmap bitmap, double brightnessThreshold)
     {
       if (null == bitmap)
         throw new ArgumentNullException(nameof(bitmap));
 
-      threshold = RhinoMath.Clamp(threshold, 0.0, 1.0);
+      brightnessThreshold = RhinoMath.Clamp(brightnessThreshold, 0.0, 1.0);
 
-      var domain = new Interval(0, 255);
-      var t = domain.ParameterAt(threshold);
+      //var domain = new Interval(0, 255);
+      //var t = (int) domain.ParameterAt(threshold);
 
       m_ptr = UnsafeNativeMethods.potrace_bitmap_New(bitmap.Width, bitmap.Height);
       if (m_ptr != IntPtr.Zero)
@@ -400,7 +400,12 @@ namespace VectorizeCommon
         // Save some values for later
         Width = bitmap.Width;
         Height = bitmap.Height;
-        Treshold = threshold;
+        Treshold = brightnessThreshold;
+
+        const double brightnessFloor = 0.0;
+
+        var floor = 3.0 * brightnessFloor * 256.0;
+        var cutoff = 3.0 * brightnessThreshold * 256.0;
 
         // Thresholding...
         using (var bitmapData = bitmap.Lock())
@@ -409,18 +414,13 @@ namespace VectorizeCommon
           {
             for (var x = 0; x < bitmap.Width; x++)
             {
-              var pixel = bitmapData.GetPixel(x, y);
-              if (pixel.A <= 0.0)
-              {
-                // Fully transparent = white
-                PutPixel(x, y, false);
-              }
-              else
-              {
-                // Convert to gray (your favorite equation here)
-                var gray = (int)((pixel.Rb * 0.3) + (pixel.Gb * 0.59) + (pixel.Bb * 0.11));
-                PutPixel(x, y, gray <= t);
-              }
+              var color = bitmapData.GetPixel(x, y);
+              var alpha = color.Ab;
+              var white = 3 * (255 - alpha);
+              var sample = color.Rb + color.Gb + color.Bb;
+              var brightness = sample * alpha / 256 + white;
+              var black = brightness >= floor && brightness < cutoff;
+              PutPixel(x, y, black);
             }
           }
 
