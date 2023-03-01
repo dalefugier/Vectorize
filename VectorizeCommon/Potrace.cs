@@ -423,10 +423,13 @@ namespace VectorizeCommon
               PutPixel(x, y, black);
             }
           }
-
-          // Potrace bitmaps use a cartesian coordinate system
-          Flip();
         }
+
+        //if (m_invert)
+        //  Invert();
+
+        // Potrace bitmaps use a cartesian coordinate system
+        Flip();
       }
     }
 
