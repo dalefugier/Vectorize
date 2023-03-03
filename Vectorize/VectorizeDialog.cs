@@ -29,7 +29,7 @@ namespace Vectorize
       Resizable = false;
       ShowHelpButton = false;
       Width = 350;
-      Title = LOC.STR("Vectorize");
+      Title = "Vectorize";
       Content = CreateTableLayout();
       Shown += (sender, e) => UpdateAndRedraw();
     }
@@ -49,7 +49,7 @@ namespace Vectorize
         MaxValue = 100.0,
         DecimalPlaces = 0,
         Increment = 1.0,
-        ToolTip = LOC.STR("Weighted RGB color evaluation threshold"),
+        ToolTip = "Weighted RGB color evaluation threshold",
         Value = (int)(parameters.Threshold * 100.0),
         Width = 45
       };
@@ -89,7 +89,7 @@ namespace Vectorize
 
       var dd_turnpolicy = new DropDown
       {
-        ToolTip = LOC.STR("Algorithm used to resolve ambiguities in path decomposition")
+        ToolTip = "Algorithm used to resolve ambiguities in path decomposition"
       };
       foreach (var str in Enum.GetNames(typeof(PotraceTurnPolicy)))
         dd_turnpolicy.Items.Add(str);
@@ -110,7 +110,7 @@ namespace Vectorize
         MaxValue = 100.0,
         DecimalPlaces = 0,
         Increment = 1.0,
-        ToolTip = LOC.STR("Filter speckles of up to this size in pixels"),
+        ToolTip = "Filter speckles of up to this size in pixels",
         Value = parameters.TurdSize
       };
       ns_turdsize.ValueChanged += (sender, args) =>
@@ -123,10 +123,10 @@ namespace Vectorize
       {
         ValueUpdateMode = NumericUpDownWithUnitParsingUpdateMode.WhenDoneChanging,
         MinValue = 0.0,
-        MaxValue = 1.5,
+        MaxValue = 1.34,
         DecimalPlaces = 1,
         Increment = 0.1,
-        ToolTip = LOC.STR("Corner rounding threshold"),
+        ToolTip = "Corner rounding threshold",
         Value = parameters.AlphaMax
       };
       ns_alphamax.ValueChanged += (sender, args) =>
@@ -138,7 +138,7 @@ namespace Vectorize
       var chk_includeborder = new CheckBox
       {
         ThreeState = false,
-        ToolTip = LOC.STR("Include border rectangle"),
+        ToolTip = "Include border rectangle",
         Checked = parameters.IncludeBorder
       };
       chk_includeborder.CheckedChanged += (sender, args) =>
@@ -150,7 +150,7 @@ namespace Vectorize
       var chk_curveoptimizing = new CheckBox
       {
         ThreeState = false,
-        ToolTip = LOC.STR("Optimize of Bézier segments by a single segment when possible"),
+        ToolTip = "Optimize of Bézier segments by a single segment when possible",
         Checked = parameters.OptimizeCurve
       };
 
@@ -162,7 +162,7 @@ namespace Vectorize
         DecimalPlaces = m_doc.ModelDistanceDisplayPrecision,
         Increment = 0.1,
         Enabled = parameters.OptimizeCurve,
-        ToolTip = LOC.STR("Tolerance used to optimize Bézier segments"),
+        ToolTip = "Tolerance used to optimize Bézier segments",
         Value = parameters.OptimizeTolerance
       };
 
@@ -181,7 +181,7 @@ namespace Vectorize
 
       var btn_reset = new Button
       {
-        Text = LOC.STR("Restore Defaults")
+        Text = "Restore Defaults"
       };
       btn_reset.Click += (sender, args) =>
       {
@@ -206,30 +206,30 @@ namespace Vectorize
       var minimum_size = new Eto.Drawing.Size(150, 0);
 
       var layout = new RhinoDialogTableLayout(false) { Spacing = new Eto.Drawing.Size(10, 8) };
-      layout.Rows.Add(new TableRow(new TableCell(new LabelSeparator { Text = LOC.STR("Vectorization options") }, true)));
+      layout.Rows.Add(new TableRow(new TableCell(new LabelSeparator { Text = "Vectorization options" }, true)));
 
-      var panel0 = new Panel { MinimumSize = minimum_size, Content = new Label() { Text = LOC.STR("Threshold") } };
+      var panel0 = new Panel { MinimumSize = minimum_size, Content = new Label() { Text = "Threshold" } };
       var table0 = new TableLayout { Padding = new Eto.Drawing.Padding(8, 0, 0, 0) };
       table0.Rows.Add(new TableRow(new TableCell(panel0), new TableCell(sld_threshold, true), new TableCell(ns_threshold)));
       layout.Rows.Add(table0);
 
-      var panel1 = new Panel { MinimumSize = minimum_size, Content = new Label() { Text = LOC.STR("Turn policy") } };
-      var panel2 = new Panel { MinimumSize = minimum_size, Content = new Label() { Text = LOC.STR("Include border") } };
+      var panel1 = new Panel { MinimumSize = minimum_size, Content = new Label() { Text = "Turn policy" } };
+      var panel2 = new Panel { MinimumSize = minimum_size, Content = new Label() { Text = "Include border" } };
 
       var table1 = new TableLayout { Padding = new Eto.Drawing.Padding(8, 0, 0, 0), Spacing = new Size(10, 8) };
       table1.Rows.Add(new TableRow(new TableCell(panel1), new TableCell(dd_turnpolicy)));
-      table1.Rows.Add(new TableRow(new TableCell(new Label() { Text = LOC.STR("Filter size") }), new TableCell(ns_turdsize)));
-      table1.Rows.Add(new TableRow(new TableCell(new Label() { Text = LOC.STR("Corner rounding") }), new TableCell(ns_alphamax)));
+      table1.Rows.Add(new TableRow(new TableCell(new Label() { Text = "Filter size" }), new TableCell(ns_turdsize)));
+      table1.Rows.Add(new TableRow(new TableCell(new Label() { Text = "Corner rounding" }), new TableCell(ns_alphamax)));
       table1.Rows.Add(new TableRow(new TableCell(panel2), new TableCell(chk_includeborder)));
 
       layout.Rows.Add(table1);
 
-      layout.Rows.Add(new TableRow(new TableCell(new LabelSeparator { Text = LOC.STR("Curve optimization") }, true)));
+      layout.Rows.Add(new TableRow(new TableCell(new LabelSeparator { Text = "Curve optimization" }, true)));
 
-      var panel3 = new Panel { MinimumSize = minimum_size, Content = new Label() { Text = LOC.STR("Optimizing") } };
+      var panel3 = new Panel { MinimumSize = minimum_size, Content = new Label() { Text = "Optimizing" } };
       var table2 = new TableLayout { Padding = new Eto.Drawing.Padding(8, 0, 0, 0), Spacing = new Size(10, 8) };
       table2.Rows.Add(new TableRow(new TableCell(panel3), new TableCell(chk_curveoptimizing)));
-      table2.Rows.Add(new TableRow(new TableCell(new Label() { Text = LOC.STR("Tolerance") }), new TableCell(ns_opttolerance)));
+      table2.Rows.Add(new TableRow(new TableCell(new Label() { Text = "Tolerance" }), new TableCell(ns_opttolerance)));
       table2.Rows.Add(null);
       table2.Rows.Add(new TableRow(new TableCell(new Label() { Text = "" }), new TableCell(btn_reset)));
       layout.Rows.Add(table2);

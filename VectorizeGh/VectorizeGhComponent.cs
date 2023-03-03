@@ -14,10 +14,10 @@ namespace VectorizeGh
   {
     private int idxPath = -1;
     private int idxThreshold = -1;
-    private int idxTurnPolicy = -1;
+    //private int idxTurnPolicy = -1;
     private int idxTurdSize = -1;
     private int idxAlphaMax = -1;
-    private int idxOptimizeCurve = -1;
+    //private int idxOptimizeCurve = -1;
     private int idxOptimizeTolerance = -1;
     private int idxIncludeBorder = -1;
     private int idxCurves = -1;
@@ -34,20 +34,20 @@ namespace VectorizeGh
     {
       var args = new PotraceParameters();
 
-      idxPath = pManager.AddTextParameter("Path", "Path", "Image file path", GH_ParamAccess.item);
-      idxThreshold = pManager.AddNumberParameter("Threshold", "Thresh", "Bitmap thresholding parameter. Range is from 0.0 to 1.0.", GH_ParamAccess.item, args.Threshold);
-      idxTurnPolicy = pManager.AddIntegerParameter("TurnPolicy", "Turn", "Algorithm use to resolve ambiguities during decomposition of bitmaps. Range is from 0 to 6.", GH_ParamAccess.item, (int)args.TurnPolicy);
-      idxTurdSize = pManager.AddIntegerParameter("FilterSize", "Filter", "Used to de-speckle the bitmap. Range is from 0 to 100.", GH_ParamAccess.item, args.TurdSize);
-      idxAlphaMax = pManager.AddNumberParameter("CornerRounding", "Corner", "Corner rounding threshold. Range is from 0.0 to 1.5.", GH_ParamAccess.item, args.AlphaMax);
-      idxOptimizeCurve = pManager.AddBooleanParameter("OptimizeCurve", "Optimize", "Enables curve optimizing", GH_ParamAccess.item, args.OptimizeCurve);
-      idxOptimizeTolerance = pManager.AddNumberParameter("OptimizeTolerance", "Tol", "Tolerance for curve optimization. Range is from 0.0 to 1.0.", GH_ParamAccess.item, args.OptimizeTolerance);
-      idxIncludeBorder = pManager.AddBooleanParameter("IncludeBorder", "Border", "Include border curve.", GH_ParamAccess.item, args.IncludeBorder);
+      idxPath = pManager.AddTextParameter("Path", "P", "Image file path", GH_ParamAccess.item);
+      idxThreshold = pManager.AddNumberParameter("Threshold", "T", "Image brightness threshold, from 0.0 (black) to 1.0 (white).", GH_ParamAccess.item, args.Threshold);
+      //idxTurnPolicy = pManager.AddIntegerParameter("TurnPolicy", "Turn", "Algorithm use to resolve ambiguities during decomposition of bitmaps. Range is from 0 to 6.", GH_ParamAccess.item, (int)args.TurnPolicy);
+      idxTurdSize = pManager.AddIntegerParameter("Speckles", "S", "Image despeckle threshold, from 0 to 100.", GH_ParamAccess.item, args.TurdSize);
+      idxAlphaMax = pManager.AddNumberParameter("Corners", "C", "Corner detection threshold, from 0.0 (polygons) to 1.34 (no corner).", GH_ParamAccess.item, args.AlphaMax);
+      //idxOptimizeCurve = pManager.AddBooleanParameter("OptimizeCurve", "Optimize", "Enables curve optimizing", GH_ParamAccess.item, args.OptimizeCurve);
+      idxOptimizeTolerance = pManager.AddNumberParameter("Optimize", "O", "Optimize paths by replacing sequences of Bézier segments with single segments. Range is from 0.0 to 1.0.", GH_ParamAccess.item, args.OptimizeTolerance);
+      idxIncludeBorder = pManager.AddBooleanParameter("Border", "B", "Include border curve.", GH_ParamAccess.item, args.IncludeBorder);
 
       pManager[idxThreshold].Optional = true;
-      pManager[idxTurnPolicy].Optional = true;
+      //pManager[idxTurnPolicy].Optional = true;
       pManager[idxTurdSize].Optional = true;
       pManager[idxAlphaMax].Optional = true;
-      pManager[idxOptimizeCurve].Optional = true;
+      //pManager[idxOptimizeCurve].Optional = true;
       pManager[idxOptimizeTolerance].Optional = true;
       pManager[idxIncludeBorder].Optional = true;
     }
@@ -127,16 +127,16 @@ namespace VectorizeGh
       }
 
       // TurnPolicy
-      var turnPolicy = (int)args.TurnPolicy;
-      if (DA.GetData(idxTurnPolicy, ref turnPolicy))
-      {
-        if (turnPolicy < 0 || turnPolicy > 6)
-        {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "TurnPolicy range is from 0 to 6.");
-          return;
-        }
-        args.TurnPolicy = (PotraceTurnPolicy)turnPolicy;
-      }
+      //var turnPolicy = (int)args.TurnPolicy;
+      //if (DA.GetData(idxTurnPolicy, ref turnPolicy))
+      //{
+      //  if (turnPolicy < 0 || turnPolicy > 6)
+      //  {
+      //    AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "TurnPolicy range is from 0 to 6.");
+      //    return;
+      //  }
+      //  args.TurnPolicy = (PotraceTurnPolicy)turnPolicy;
+      //}
 
       // TurdSize
       var turdSize = args.TurdSize;
@@ -154,20 +154,20 @@ namespace VectorizeGh
       var alphaMax = args.AlphaMax;
       if (DA.GetData(idxAlphaMax, ref alphaMax))
       {
-        if (alphaMax < 0.0 || alphaMax > 1.5)
+        if (alphaMax < 0.0 || alphaMax > 1.34)
         {
-          AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "CornerRounding range is from 0.0 to 1.5.");
+          AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "CornerRounding range is from 0.0 to 1.34.");
           return;
         }
         args.AlphaMax = alphaMax;
       }
 
       // OptimizeCurve
-      var optimizeCurve = args.OptimizeCurve;
-      if (DA.GetData(idxOptimizeCurve, ref optimizeCurve))
-      {
-        args.OptimizeCurve = optimizeCurve;
-      }
+      //var optimizeCurve = args.OptimizeCurve;
+      //if (DA.GetData(idxOptimizeCurve, ref optimizeCurve))
+      //{
+      //  args.OptimizeCurve = optimizeCurve;
+      //}
 
       // OptimizeTolerance
       var optimizeTolerance = args.OptimizeTolerance;

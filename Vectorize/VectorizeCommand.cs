@@ -3,12 +3,10 @@ using Rhino.Commands;
 using Rhino.Input;
 using Rhino.Input.Custom;
 using Rhino.UI;
-using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using VectorizeCommon;
 
 namespace Vectorize
@@ -19,12 +17,6 @@ namespace Vectorize
   public class VectorizeCommand : Command
   {
     /// <summary>
-    /// Controls whether or not the generated output curves are selected
-    /// after they are added to the document.
-    /// </summary>
-    private readonly bool m_select_output = true;
-
-    /// <summary>
     /// Command.EnglishName override
     /// </summary>
     public override string EnglishName => LOC.COMMANDNAME("Vectorize");
@@ -34,31 +26,40 @@ namespace Vectorize
     /// </summary>
     protected override Result RunCommand(RhinoDoc doc, RunMode mode)
     {
-      // Prompt the user for the name of the image file to vectorize.
+      // Prompt the user for the name of the image file
       string path = GetImageFileName(mode);
       if (string.IsNullOrEmpty(path))
         return Result.Cancel;
 
-      // Creates a bitmap from the specified file.
-      var bitmap = Image.FromFile(path) as Bitmap;
-      if (null == bitmap)
+      // Try readng image file
+      Bitmap bitmap;
+      try
       {
-        RhinoApp.WriteLine(LOC.STR("The specified file cannot be identifed as a supported type."));
-        return Result.Failure;
-      }
+        bitmap = Image.FromFile(path) as Bitmap;
+        if (null == bitmap)
+        {
+          RhinoApp.WriteLine("The specified file cannot be identifed as a supported type.");
+          return Result.Failure;
+        }
 
-      // Verify bitmap size     
-      if (0 == bitmap.Width || 0 == bitmap.Height)
+        if (0 == bitmap.Width || 0 == bitmap.Height)
+        {
+          RhinoApp.WriteLine("Error reading the specified file.");
+          return Result.Failure;
+        }
+      }
+      catch
       {
-        RhinoApp.WriteLine(LOC.STR("Error reading the specified file."));
         return Result.Failure;
       }
 
       // Calculate scale factor so curves of a reasonable size are added to Rhino
-      var unit_scale = (doc.ModelUnitSystem != UnitSystem.Inches)
+      var unitScale = (doc.ModelUnitSystem != UnitSystem.Inches)
         ? RhinoMath.UnitScale(UnitSystem.Inches, doc.ModelUnitSystem)
         : 1.0;
-      var scale = (double)(1.0 / bitmap.HorizontalResolution * unit_scale);
+
+      var scale_x = (double)(1.0 / bitmap.HorizontalResolution * unitScale);
+      var scale_y= (double)(1.0 / bitmap.VerticalResolution * unitScale);
 
       // I'm not convinced this is useful...
       if (true)
@@ -66,25 +67,23 @@ namespace Vectorize
         var format = $"F{doc.DistanceDisplayPrecision}";
 
         // Print image size in pixels
-        RhinoApp.WriteLine(LOC.STR("Image size in pixels: {0} x {1}"),
-          bitmap.Width,
-          bitmap.Height
-          );
+        RhinoApp.WriteLine("Image size in pixels: {0} x {1}", bitmap.Width, bitmap.Height);
 
-        // Print image size in inches
-        var width = (double)(bitmap.Width / bitmap.HorizontalResolution);
-        var height = (double)(bitmap.Height / bitmap.VerticalResolution);
-        RhinoApp.WriteLine("Image size in inches: {0} x {1}",
-          width.ToString(format, CultureInfo.InvariantCulture),
-          height.ToString(format, CultureInfo.InvariantCulture)
-          );
-
-        // Image size in in model units, if needed
-        if (doc.ModelUnitSystem != UnitSystem.Inches)
+        if (doc.ModelUnitSystem == UnitSystem.Inches)
         {
-          width = (double)(bitmap.Width / bitmap.HorizontalResolution * unit_scale);
-          height = (double)(bitmap.Height / bitmap.VerticalResolution * unit_scale);
-          RhinoApp.WriteLine(LOC.STR("Image size in {0}: {1} x {2}"),
+          // Print image size in inches
+          var width = (double)(bitmap.Width / bitmap.HorizontalResolution);
+          var height = (double)(bitmap.Height / bitmap.VerticalResolution);
+          RhinoApp.WriteLine("Image size in inches: {0} x {1}",
+            width.ToString(format, CultureInfo.InvariantCulture),
+            height.ToString(format, CultureInfo.InvariantCulture)
+          );
+        }
+        else
+        {
+          var width = (double)(bitmap.Width / bitmap.HorizontalResolution * unitScale);
+          var height = (double)(bitmap.Height / bitmap.VerticalResolution * unitScale);
+          RhinoApp.WriteLine("Image size in {0}: {1} x {2}",
             doc.ModelUnitSystem.ToString().ToLower(),
             width.ToString(format, CultureInfo.InvariantCulture),
             height.ToString(format, CultureInfo.InvariantCulture)
@@ -96,7 +95,7 @@ namespace Vectorize
       var eto_bitmap = ConvertBitmapToEto(bitmap);
       if (null == eto_bitmap)
       {
-        RhinoApp.WriteLine(LOC.STR("Unable to convert image to Eto bitmap."));
+        RhinoApp.WriteLine("Unable to convert image to Eto bitmap.");
         return Result.Failure;
       }
 
@@ -106,7 +105,7 @@ namespace Vectorize
         var temp_bitmap = MakeCompatibleBitmap(eto_bitmap);
         if (null == temp_bitmap)
         {
-          RhinoApp.WriteLine(Localization.LocalizeString(LOC.STR("The image has an incompatible pixel format. Please select an image with 24 or 32 bits per pixel, or 8 bit indexed."), 2290));
+          RhinoApp.WriteLine("The image has an incompatible pixel format. Please select an image with 24 or 32 bits per pixel, or 8 bit indexed.");
           return Result.Failure;
         }
         else
@@ -123,17 +122,7 @@ namespace Vectorize
       parameters.GetSettings(Settings);
 
       // Create the conduit, which does most of the work
-      var conduit = new VectorizeConduit(
-        eto_bitmap,
-        parameters,
-        scale,
-        m_select_output
-          ? Rhino.ApplicationSettings.AppearanceSettings.SelectedObjectColor
-          : doc.Layers.CurrentLayer.Color
-        )
-      {
-        Enabled = true,
-      };
+      var conduit = new VectorizeConduit(eto_bitmap, parameters, scale_x, scale_y) { Enabled = true };
 
       if (mode == RunMode.Interactive)
       {
@@ -153,7 +142,7 @@ namespace Vectorize
       {
         // Show the command line options
         var go = new GetOption();
-        go.SetCommandPrompt(LOC.STR("Vectorization options. Press Enter when done"));
+        go.SetCommandPrompt("Vectorization options. Press Enter when done");
         go.AcceptNothing(true);
         while (true)
         {
@@ -164,33 +153,33 @@ namespace Vectorize
 
           // Threshold
           var optThreshold = new OptionDouble(parameters.Threshold, 0.0, 100.0);
-          var idxThreshold = go.AddOptionDouble(LOC.STR("Threshold"), ref optThreshold, LOC.STR("Threshold"));
+          var idxThreshold = go.AddOptionDouble("Threshold", ref optThreshold, "Image brightness threshold");
 
           // TurnPolicy
-          var idxTurnPolicy = go.AddOptionEnumList(LOC.STR("TurnPolicy"), parameters.TurnPolicy);
+          //var idxTurnPolicy = go.AddOptionEnumList("TurnPolicy"), parameters.TurnPolicy);
 
           // Turdsize
           var optTurdSize = new OptionInteger(parameters.TurdSize, 0, 100);
-          var idxTurdSize = go.AddOptionInteger(LOC.STR("FilterSize"), ref optTurdSize, LOC.STR("Filter speckles of up to this size in pixels"));
+          var idxTurdSize = go.AddOptionInteger("Speckles", ref optTurdSize, "Image despeckle threshold");
 
           // AlphaMax
-          var optAlphaMax = new OptionDouble(parameters.AlphaMax, 0.0, 1.5);
-          var idxAlphaMax = go.AddOptionDouble(LOC.STR("CornerRounding"), ref optAlphaMax, LOC.STR("Corner rounding threshold"));
-
-          // IncludeBorder
-          var optIncludeBorder = new OptionToggle(parameters.IncludeBorder, "No", "Yes");
-          var idxIncludeBorder = go.AddOptionToggle(LOC.STR("IncludeBorder"), ref optIncludeBorder);
+          var optAlphaMax = new OptionDouble(parameters.AlphaMax, 0.0, 1.34);
+          var idxAlphaMax = go.AddOptionDouble("Corners", ref optAlphaMax, "Corner detection threshold");
 
           // OptimizeCurve
-          var optOptimizeCurve = new OptionToggle(parameters.OptimizeCurve, "No", "Yes");
-          var idxOptimizeCurve = go.AddOptionToggle(LOC.STR("Optimizing"), ref optOptimizeCurve);
+          //var optOptimizeCurve = new OptionToggle(parameters.OptimizeCurve, "No", "Yes");
+          //var idxOptimizeCurve = go.AddOptionToggle("Optimizing", ref optOptimizeCurve);
 
           // OptimizeTolerance
           var optOptimizeTolerance = new OptionDouble(parameters.OptimizeTolerance, 0.0, 1.0);
-          var idxOptimizeTolerance = go.AddOptionDouble(LOC.STR("Tolerance"), ref optOptimizeTolerance, LOC.STR("Optimizing tolerance"));
+          var idxOptimizeTolerance = go.AddOptionDouble("Optimize", ref optOptimizeTolerance, "Curve simplification tolerance");
+
+          // IncludeBorder
+          var optIncludeBorder = new OptionToggle(parameters.IncludeBorder, "No", "Yes");
+          var idxIncludeBorder = go.AddOptionToggle("IncludeBorder", ref optIncludeBorder);
 
           // RestoreDefaults
-          var idxRestoreDefaults = go.AddOption(LOC.STR("RestoreDefaults"));
+          var idxRestoreDefaults = go.AddOption("RestoreDefaults");
 
           var res = go.Get();
 
@@ -207,12 +196,12 @@ namespace Vectorize
               }
 
               // TurnPolicy
-              if (idxTurnPolicy == option.Index)
-              {
-                var list = Enum.GetValues(typeof(PotraceTurnPolicy)).Cast<PotraceTurnPolicy>().ToList();
-                parameters.TurnPolicy = list[option.CurrentListOptionIndex];
-                continue;
-              }
+              //if (idxTurnPolicy == option.Index)
+              //{
+              //  var list = Enum.GetValues(typeof(PotraceTurnPolicy)).Cast<PotraceTurnPolicy>().ToList();
+              //  parameters.TurnPolicy = list[option.CurrentListOptionIndex];
+              //  continue;
+              //}
 
               // Turdsize
               if (idxTurdSize == option.Index)
@@ -236,11 +225,11 @@ namespace Vectorize
               }
 
               // OptimizeCurve
-              if (idxOptimizeCurve == option.Index)
-              {
-                parameters.OptimizeCurve = optOptimizeCurve.CurrentValue;
-                continue;
-              }
+              //if (idxOptimizeCurve == option.Index)
+              //{
+              //  parameters.OptimizeCurve = optOptimizeCurve.CurrentValue;
+              //  continue;
+              //}
 
               // OptimizeTolerance
               if (idxOptimizeTolerance == option.Index)
@@ -279,11 +268,8 @@ namespace Vectorize
           continue;
 
         var objectId = doc.Objects.AddCurve(conduit.Curves[i], attributes);
-        if (m_select_output)
-        {
-          var rhinoObj = doc.Objects.Find(objectId);
-          rhinoObj?.Select(true);
-        }
+        var rhinoObj = doc.Objects.Find(objectId);
+        rhinoObj?.Select(true);
       }
 
       conduit.Enabled = false;
@@ -296,45 +282,59 @@ namespace Vectorize
     }
 
     /// <summary>
-    /// Get name of an image file.
+    /// Get the name of an image file to trace.
     /// </summary>
     private string GetImageFileName(RunMode mode)
     {
-      string path;
-      if (mode == RunMode.Interactive)
-      {
-        var dialog = new Eto.Forms.OpenFileDialog();
+      return (mode == RunMode.Interactive)
+        ? GetImageFileNameInteractive()
+        : GetImageFileNameScripted();
+    }
 
-        string[] all = { ".bmp", ".gif", ".jpg", ".jpeg", ".png", ".tif", ".tiff" };
-        dialog.Filters.Add(new Eto.Forms.FileFilter(LOC.STR("All image files"), all));
+    /// <summary>
+    /// Get the name of an image file interactively.
+    /// </summary>
+    private string GetImageFileNameInteractive()
+    {
+      var dialog = new Eto.Forms.OpenFileDialog();
 
-        dialog.Filters.Add(new Eto.Forms.FileFilter(LOC.STR("Bitmap"), ".bmp"));
-        dialog.Filters.Add(new Eto.Forms.FileFilter(LOC.STR("GIF"), ".gif"));
+      string[] all = { ".bmp", ".gif", ".jpg", ".jpeg", ".png", ".tif", ".tiff" };
+      dialog.Filters.Add(new Eto.Forms.FileFilter("All image files", all));
 
-        string[] jpeg = { ".jpg", ".jpe", ".jpeg" };
-        dialog.Filters.Add(new Eto.Forms.FileFilter(LOC.STR("JPEG"), jpeg));
-        dialog.Filters.Add(new Eto.Forms.FileFilter(LOC.STR("PNG"), ".png"));
+      dialog.Filters.Add(new Eto.Forms.FileFilter("Bitmap", ".bmp"));
+      dialog.Filters.Add(new Eto.Forms.FileFilter("GIF", ".gif"));
 
-        string[] tiff = { ".tif", ".tiff" };
-        dialog.Filters.Add(new Eto.Forms.FileFilter(LOC.STR("TIFF"), tiff));
+      string[] jpeg = { ".jpg", ".jpe", ".jpeg" };
+      dialog.Filters.Add(new Eto.Forms.FileFilter("JPEG", jpeg));
+      dialog.Filters.Add(new Eto.Forms.FileFilter("PNG", ".png"));
 
-        var res = dialog.ShowDialog(RhinoEtoApp.MainWindow);
-        if (res != Eto.Forms.DialogResult.Ok)
-          return null;
+      string[] tiff = { ".tif", ".tiff" };
+      dialog.Filters.Add(new Eto.Forms.FileFilter("TIFF", tiff));
 
-        path = dialog.FileName;
-      }
-      else
-      {
-        var gs = new GetString();
-        gs.SetCommandPrompt(LOC.STR("Name of image file to open"));
-        gs.Get();
-        if (gs.CommandResult() != Result.Success)
-          return null;
+      var res = dialog.ShowDialog(RhinoEtoApp.MainWindow);
+      if (res != Eto.Forms.DialogResult.Ok)
+        return null;
 
-        path = gs.StringResult();
-      }
+      return dialog.FileName;
+    }
 
+    /// <summary>
+    /// Get the name of an image file scripted.
+    /// </summary>
+    private string GetImageFileNameScripted()
+    {
+      var gs = new GetString();
+      gs.SetCommandPrompt("Name of image file to open");
+      gs.AddOption("Browse");
+      var result = gs.Get();
+
+      if (result == GetResult.Option)
+        return GetImageFileNameInteractive();
+
+      if (result != GetResult.String)
+        return null;
+
+      var path = gs.StringResult();
       if (!string.IsNullOrEmpty(path))
         path = path.Trim();
 
@@ -343,7 +343,7 @@ namespace Vectorize
 
       if (!File.Exists(path))
       {
-        RhinoApp.WriteLine(LOC.STR("The specified file cannot be found."));
+        RhinoApp.WriteLine("The specified file cannot be found.");
         return null;
       }
 
@@ -368,10 +368,8 @@ namespace Vectorize
     }
 
     /// <summary>
-    /// 
+    /// Determines if the bitmap an Eto BitmapData.GetPixel-compatible bitmap
     /// </summary>
-    /// <param name="bitmap"></param>
-    /// <returns></returns>
     private bool IsCompatibleBitmap(Eto.Drawing.Bitmap bitmap)
     {
       if (null == bitmap)
@@ -403,9 +401,8 @@ namespace Vectorize
       var size = new Eto.Drawing.Size(bitmap.Width, bitmap.Height);
       var bmp = new Eto.Drawing.Bitmap(size, Eto.Drawing.PixelFormat.Format24bppRgb);
       using (var graphics = new Eto.Drawing.Graphics(bmp))
-      {
         graphics.DrawImage(bitmap, 0, 0);
-      }
+
       return bmp;
     }
 

@@ -40,7 +40,7 @@ VECTORIZELIB_FUNCTION double potrace_param_GetSetDouble(potrace_param_t* pParam,
       case idx_alphamax:
         // The useful range is from 0.0 (polygon) to 1.3334 (no corners).
         // But 1.3334 looks bad in UI. So round up.
-        pParam->alphamax = CLAMP(setValue, 0.0, 1.5);
+        pParam->alphamax = CLAMP(setValue, 0.0, 1.34);
         break;
       case idx_opttolerance:
         pParam->opttolerance = CLAMP(setValue, 0.0, 1.0);

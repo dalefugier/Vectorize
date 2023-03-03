@@ -1,12 +1,7 @@
-﻿using Eto.Forms;
-using Rhino.Commands;
-using Rhino.Display;
+﻿using Rhino.Display;
 using Rhino.Geometry;
-using Rhino.UI;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Security.Cryptography;
 using VectorizeCommon;
 
 namespace Vectorize
@@ -18,8 +13,10 @@ namespace Vectorize
   {
     private readonly Eto.Drawing.Bitmap m_etoBitmap;
     private readonly PotraceParameters m_parameters;
-    private readonly double m_scale;
-    private readonly Color m_color;
+    private readonly double m_scaleX = 1.0;
+    private readonly double m_scaleY = 1.0;
+
+    private readonly Color m_color = Rhino.ApplicationSettings.AppearanceSettings.SelectedObjectColor;
     private readonly List<Curve> m_curves = new List<Curve>();
     private PotraceBitmap m_potraceBitmap;
     private BoundingBox m_bbox = BoundingBox.Unset;
@@ -27,12 +24,12 @@ namespace Vectorize
     /// <summary>
     /// Public constructor.
     /// </summary>
-    public VectorizeConduit(Eto.Drawing.Bitmap bitmap, PotraceParameters parameters, double scale, Color color)
+    public VectorizeConduit(Eto.Drawing.Bitmap bitmap, PotraceParameters parameters, double scaleX, double scaleY)
     {
       m_etoBitmap = bitmap;
       m_parameters = parameters;
-      m_scale = scale;
-      m_color = color;
+      m_scaleX = scaleX;
+      m_scaleY = scaleY;
     }
 
     /// <summary>
@@ -129,9 +126,9 @@ namespace Vectorize
       if (m_curves.Count > 0)
       {
         // Scale the output, per the calculation made in the command.
-        if (m_scale != 1.0)
+        if (m_scaleX != 1.0 || m_scaleY != 1.0)
         {
-          var xform = Transform.Scale(Point3d.Origin, m_scale);
+          var xform = Transform.Scale(Plane.WorldXY, m_scaleX, m_scaleY, 1.0);
           for (var i = 0; i < m_curves.Count; i++)
             m_curves[i].Transform(xform);
         }

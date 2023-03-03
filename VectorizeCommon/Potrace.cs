@@ -29,7 +29,7 @@ namespace VectorizeCommon
     /// </summary>
     Right = 3,
     /// <summary>
-    /// Prefers to connect the color (black or white) that occurs least
+    /// Default. Prefers to connect the color (black or white) that occurs least
     /// frequently in a local neighborhood of the current position.
     /// </summary>
     Minority = 4,
@@ -143,7 +143,7 @@ namespace VectorizeCommon
     /// <summary>
     /// The threshold for the detection of corners. 
     /// It controls the smoothness of the traced curve. 
-    /// The default is 1.0, and the range is from 0.0 (polygon) to 4/3.0 (no corners).
+    /// The default is 1.0, and the range is from 0.0 (polygon) to 1.34 (no corners).
     /// </summary>
     public double AlphaMax
     {
@@ -179,14 +179,14 @@ namespace VectorizeCommon
 
     /// <summary>
     /// Bitmap thresholding parameter, used to weight colors to either black or white.
-    /// The default value is 0.5. The range is from 0.0 to 1.0.
+    /// The default value is 0.45. The range is from 0.0 to 1.0.
     /// </summary>
     public double Threshold
     {
       get => m_threshold;
       set => m_threshold = RhinoMath.Clamp(value, 0.0, 1.0);
     }
-    private double m_threshold = 0.5;
+    private double m_threshold = 0.45;
 
     /// <summary>
     /// Include a rectangle curve that bounds the extends of the bitmap.
@@ -203,7 +203,7 @@ namespace VectorizeCommon
     public void SetDefaults()
     {
       UnsafeNativeMethods.potrace_param_SetDefault(m_ptr);
-      Threshold = 0.5;
+      Threshold = 0.45;
       IncludeBorder = true;
     }
 
