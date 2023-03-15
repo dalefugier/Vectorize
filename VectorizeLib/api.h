@@ -8,7 +8,7 @@
 #endif
 #endif
 
-#if defined(__APPLE)
+#if defined(__APPLE__)
 #ifdef VECTORIZELIB_EXPORTS
 #define VECTORIZELIB_FUNCTION extern "C" __attribute__ ((visibility ("default")))
 #endif
