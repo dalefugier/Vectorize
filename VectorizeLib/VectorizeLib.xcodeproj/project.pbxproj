@@ -1,0 +1,360 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 55;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		2D179B3E29C22775005CC708 /* trace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D179B3829C22775005CC708 /* trace.cpp */; };
+		2D179B3F29C22775005CC708 /* pch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D179B3929C22775005CC708 /* pch.cpp */; };
+		2D179B4029C22775005CC708 /* decompose.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D179B3A29C22775005CC708 /* decompose.cpp */; };
+		2D179B4129C22775005CC708 /* potracelib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D179B3B29C22775005CC708 /* potracelib.cpp */; };
+		2D179B4229C22775005CC708 /* curve.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D179B3C29C22775005CC708 /* curve.cpp */; };
+		2D179B4329C22775005CC708 /* api.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D179B3D29C22775005CC708 /* api.cpp */; };
+		2D179B4E29C22795005CC708 /* decompose.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D179B4429C22794005CC708 /* decompose.h */; };
+		2D179B4F29C22795005CC708 /* progress.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D179B4529C22794005CC708 /* progress.h */; };
+		2D179B5029C22795005CC708 /* auxiliary.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D179B4629C22794005CC708 /* auxiliary.h */; };
+		2D179B5129C22795005CC708 /* bitmap.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D179B4729C22795005CC708 /* bitmap.h */; };
+		2D179B5229C22795005CC708 /* trace.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D179B4829C22795005CC708 /* trace.h */; };
+		2D179B5329C22795005CC708 /* lists.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D179B4929C22795005CC708 /* lists.h */; };
+		2D179B5429C22795005CC708 /* potracelib.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D179B4A29C22795005CC708 /* potracelib.h */; };
+		2D179B5529C22795005CC708 /* api.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D179B4B29C22795005CC708 /* api.h */; };
+		2D179B5629C22795005CC708 /* curve.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D179B4C29C22795005CC708 /* curve.h */; };
+		2D179B5729C22795005CC708 /* pch.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D179B4D29C22795005CC708 /* pch.h */; };
+		2D9F10C829C23B6E00628205 /* framework.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9F10C729C23B6E00628205 /* framework.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		2D179B3829C22775005CC708 /* trace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = trace.cpp; sourceTree = "<group>"; };
+		2D179B3929C22775005CC708 /* pch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pch.cpp; sourceTree = "<group>"; };
+		2D179B3A29C22775005CC708 /* decompose.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = decompose.cpp; sourceTree = "<group>"; };
+		2D179B3B29C22775005CC708 /* potracelib.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = potracelib.cpp; sourceTree = "<group>"; };
+		2D179B3C29C22775005CC708 /* curve.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = curve.cpp; sourceTree = "<group>"; };
+		2D179B3D29C22775005CC708 /* api.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = api.cpp; sourceTree = "<group>"; };
+		2D179B4429C22794005CC708 /* decompose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = decompose.h; sourceTree = "<group>"; };
+		2D179B4529C22794005CC708 /* progress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = progress.h; sourceTree = "<group>"; };
+		2D179B4629C22794005CC708 /* auxiliary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = auxiliary.h; sourceTree = "<group>"; };
+		2D179B4729C22795005CC708 /* bitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bitmap.h; sourceTree = "<group>"; };
+		2D179B4829C22795005CC708 /* trace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trace.h; sourceTree = "<group>"; };
+		2D179B4929C22795005CC708 /* lists.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lists.h; sourceTree = "<group>"; };
+		2D179B4A29C22795005CC708 /* potracelib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = potracelib.h; sourceTree = "<group>"; };
+		2D179B4B29C22795005CC708 /* api.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = api.h; sourceTree = "<group>"; };
+		2D179B4C29C22795005CC708 /* curve.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = curve.h; sourceTree = "<group>"; };
+		2D179B4D29C22795005CC708 /* pch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pch.h; sourceTree = "<group>"; };
+		2D9F10C729C23B6E00628205 /* framework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = framework.h; sourceTree = "<group>"; };
+		2DA5C57429C16A9A009C0EBF /* libVectorizeLib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libVectorizeLib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		2DA5C57229C16A9A009C0EBF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		2D179B3629C22732005CC708 /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				2D9F10C729C23B6E00628205 /* framework.h */,
+				2D179B4B29C22795005CC708 /* api.h */,
+				2D179B4629C22794005CC708 /* auxiliary.h */,
+				2D179B4729C22795005CC708 /* bitmap.h */,
+				2D179B4C29C22795005CC708 /* curve.h */,
+				2D179B4429C22794005CC708 /* decompose.h */,
+				2D179B4929C22795005CC708 /* lists.h */,
+				2D179B4D29C22795005CC708 /* pch.h */,
+				2D179B4A29C22795005CC708 /* potracelib.h */,
+				2D179B4529C22794005CC708 /* progress.h */,
+				2D179B4829C22795005CC708 /* trace.h */,
+			);
+			name = "Header Files";
+			sourceTree = "<group>";
+		};
+		2D179B3729C2273E005CC708 /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				2D179B3D29C22775005CC708 /* api.cpp */,
+				2D179B3C29C22775005CC708 /* curve.cpp */,
+				2D179B3A29C22775005CC708 /* decompose.cpp */,
+				2D179B3929C22775005CC708 /* pch.cpp */,
+				2D179B3B29C22775005CC708 /* potracelib.cpp */,
+				2D179B3829C22775005CC708 /* trace.cpp */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		2DA5C56B29C16A9A009C0EBF = {
+			isa = PBXGroup;
+			children = (
+				2D179B3729C2273E005CC708 /* Source Files */,
+				2D179B3629C22732005CC708 /* Header Files */,
+				2DA5C57529C16A9A009C0EBF /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		2DA5C57529C16A9A009C0EBF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2DA5C57429C16A9A009C0EBF /* libVectorizeLib.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		2DA5C57029C16A9A009C0EBF /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D179B5329C22795005CC708 /* lists.h in Headers */,
+				2D179B5429C22795005CC708 /* potracelib.h in Headers */,
+				2D179B4E29C22795005CC708 /* decompose.h in Headers */,
+				2D179B5029C22795005CC708 /* auxiliary.h in Headers */,
+				2D179B4F29C22795005CC708 /* progress.h in Headers */,
+				2D179B5529C22795005CC708 /* api.h in Headers */,
+				2D179B5629C22795005CC708 /* curve.h in Headers */,
+				2D9F10C829C23B6E00628205 /* framework.h in Headers */,
+				2D179B5129C22795005CC708 /* bitmap.h in Headers */,
+				2D179B5729C22795005CC708 /* pch.h in Headers */,
+				2D179B5229C22795005CC708 /* trace.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		2DA5C57329C16A9A009C0EBF /* VectorizeLib */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2DA5C57829C16A9A009C0EBF /* Build configuration list for PBXNativeTarget "VectorizeLib" */;
+			buildPhases = (
+				2DA5C57029C16A9A009C0EBF /* Headers */,
+				2DA5C57129C16A9A009C0EBF /* Sources */,
+				2DA5C57229C16A9A009C0EBF /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = VectorizeLib;
+			productName = VectorizeLib;
+			productReference = 2DA5C57429C16A9A009C0EBF /* libVectorizeLib.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		2DA5C56C29C16A9A009C0EBF /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1420;
+				TargetAttributes = {
+					2DA5C57329C16A9A009C0EBF = {
+						CreatedOnToolsVersion = 14.2;
+					};
+				};
+			};
+			buildConfigurationList = 2DA5C56F29C16A9A009C0EBF /* Build configuration list for PBXProject "VectorizeLib" */;
+			compatibilityVersion = "Xcode 13.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 2DA5C56B29C16A9A009C0EBF;
+			productRefGroup = 2DA5C57529C16A9A009C0EBF /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				2DA5C57329C16A9A009C0EBF /* VectorizeLib */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2DA5C57129C16A9A009C0EBF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D179B4329C22775005CC708 /* api.cpp in Sources */,
+				2D179B4129C22775005CC708 /* potracelib.cpp in Sources */,
+				2D179B4229C22775005CC708 /* curve.cpp in Sources */,
+				2D179B3E29C22775005CC708 /* trace.cpp in Sources */,
+				2D179B3F29C22775005CC708 /* pch.cpp in Sources */,
+				2D179B4029C22775005CC708 /* decompose.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		2DA5C57629C16A9A009C0EBF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+					"VECTORIZELIB_EXPORTS=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.4;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		2DA5C57729C16A9A009C0EBF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "VECTORIZELIB_EXPORTS=1";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.4;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		2DA5C57929C16A9A009C0EBF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				MACOSX_DEPLOYMENT_TARGET = 12.4;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		2DA5C57A29C16A9A009C0EBF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				MACOSX_DEPLOYMENT_TARGET = 12.4;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2DA5C56F29C16A9A009C0EBF /* Build configuration list for PBXProject "VectorizeLib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2DA5C57629C16A9A009C0EBF /* Debug */,
+				2DA5C57729C16A9A009C0EBF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2DA5C57829C16A9A009C0EBF /* Build configuration list for PBXNativeTarget "VectorizeLib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2DA5C57929C16A9A009C0EBF /* Debug */,
+				2DA5C57A29C16A9A009C0EBF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 2DA5C56C29C16A9A009C0EBF /* Project object */;
+}
