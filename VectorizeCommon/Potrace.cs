@@ -1,12 +1,71 @@
-﻿using Eto.Drawing;
-using Eto.Forms;
-using Rhino;
+﻿using Rhino;
 using Rhino.Geometry;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Security.Policy;
 
 namespace VectorizeCommon
 {
+  public class BitmapHelpers
+  {
+    /// <summary>
+    /// Converts a System.Drawing.Bitmap to a Eto.Drawing.Bitmap.
+    /// </summary>
+    public static Eto.Drawing.Bitmap ConvertBitmapToEto(System.Drawing.Bitmap bitmap)
+    {
+      if (null == bitmap)
+        return null;
+
+      using (var stream = new MemoryStream())
+      {
+        bitmap.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+        stream.Seek(0, SeekOrigin.Begin);
+        var etoBitmap = new Eto.Drawing.Bitmap(stream);
+        return etoBitmap;
+      }
+    }
+
+    /// <summary>
+    /// Determines if the bitmap an Eto BitmapData.GetPixel-compatible bitmap.
+    /// </summary>
+    public static bool IsCompatibleBitmap(Eto.Drawing.Bitmap bitmap)
+    {
+      if (null == bitmap)
+        return false;
+
+      using (var bitmapData = bitmap.Lock())
+      {
+        if (bitmapData.BytesPerPixel == 4)
+          return true;
+
+        if (bitmapData.BytesPerPixel == 3)
+          return true;
+
+        if (bitmapData.Image is Eto.Drawing.IndexedBitmap && bitmapData.BytesPerPixel == 1)
+          return true;
+      }
+
+      return false;
+    }
+
+    /// <summary>
+    /// Makes an Eto BitmapData.GetPixel-compatible bitmap.
+    /// </summary>
+    public static Eto.Drawing.Bitmap MakeCompatibleBitmap(Eto.Drawing.Bitmap bitmap)
+    {
+      if (null == bitmap)
+        return null;
+
+      var size = new Eto.Drawing.Size(bitmap.Width, bitmap.Height);
+      var etoBitmap = new Eto.Drawing.Bitmap(size, Eto.Drawing.PixelFormat.Format24bppRgb);
+      using (var graphics = new Eto.Drawing.Graphics(etoBitmap))
+        graphics.DrawImage(bitmap, 0, 0);
+
+      return etoBitmap;
+    }
+  }
+
   /// <summary>
   /// Specifies how to resolve ambiguities during decomposition of bitmaps into paths. 
   /// </summary>
@@ -189,6 +248,16 @@ namespace VectorizeCommon
     private double m_threshold = 0.45;
 
     /// <summary>
+    /// Inverts the bitmap.
+    /// </summary>
+    public bool Invert
+    {
+      get => m_invert; 
+      set => m_invert = value;
+    }
+    private bool m_invert = false;
+
+    /// <summary>
     /// Include a rectangle curve that bounds the extends of the bitmap.
     /// </summary>
     public bool IncludeBorder { get; set; } = true;
@@ -204,6 +273,7 @@ namespace VectorizeCommon
     {
       UnsafeNativeMethods.potrace_param_SetDefault(m_ptr);
       Threshold = 0.45;
+      Invert = false;
       IncludeBorder = true;
     }
 
@@ -836,5 +906,18 @@ namespace VectorizeCommon
     }
 
     #endregion // Static methods
+  }
+
+  /// <summary>
+  /// Some re-usable tooltips.
+  /// </summary>
+  public class PotraceTooltips
+  {
+    public static string Path => "Image file path.";
+    public static string Threshold => "Image brightness threshold, from 0.0 (black) to 1.0 (white).";
+    public static string TurdSize => "Image despeckle threshold, from 0 to 100.";
+    public static string AlphaMax => "Corner detection threshold, from 0.0 (polygons) to 1.34 (no corner).";
+    public static string OptimizeTolerance => "Optimize paths by replacing sequences of Bézier segments with single segments. Range is from 0.0 to 1.0.";
+    public static string IncludeBorder => "Include border curve.";
   }
 }

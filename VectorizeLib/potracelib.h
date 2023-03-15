@@ -122,17 +122,18 @@ potrace_param_t *potrace_param_default(void);
 void potrace_param_setdefault(potrace_param_t* p);
 
 /* free parameter set */
-void potrace_param_free(potrace_param_t *p);
+void potrace_param_free(potrace_param_t* p);
 
 /* trace a bitmap */
-potrace_state_t *potrace_trace(const potrace_param_t *param, 
-			       const potrace_bitmap_t *bm);
+potrace_state_t *potrace_trace(
+  const potrace_param_t* param, 
+  const potrace_bitmap_t* bm
+);
 
 /* free a Potrace state */
-void potrace_state_free(potrace_state_t *st);
+void potrace_state_free(potrace_state_t* st);
 
-/* return a static plain text version string identifying this version
-   of potracelib */
+/* return a static plain text version string identifying this version of potracelib */
 const char *potrace_version(void);
 
 #ifdef  __cplusplus

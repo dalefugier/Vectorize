@@ -3,8 +3,6 @@ using Rhino.Commands;
 using Rhino.Input;
 using Rhino.Input.Custom;
 using Rhino.UI;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using VectorizeCommon;
@@ -32,17 +30,17 @@ namespace Vectorize
         return Result.Cancel;
 
       // Try readng image file
-      Bitmap bitmap;
+      System.Drawing.Bitmap systemBitmap;
       try
       {
-        bitmap = Image.FromFile(path) as Bitmap;
-        if (null == bitmap)
+        systemBitmap = System.Drawing.Image.FromFile(path) as System.Drawing.Bitmap;
+        if (null == systemBitmap)
         {
           RhinoApp.WriteLine("The specified file cannot be identifed as a supported type.");
           return Result.Failure;
         }
 
-        if (0 == bitmap.Width || 0 == bitmap.Height)
+        if (0 == systemBitmap.Width || 0 == systemBitmap.Height)
         {
           RhinoApp.WriteLine("Error reading the specified file.");
           return Result.Failure;
@@ -58,8 +56,8 @@ namespace Vectorize
         ? RhinoMath.UnitScale(UnitSystem.Inches, doc.ModelUnitSystem)
         : 1.0;
 
-      var scale_x = (double)(1.0 / bitmap.HorizontalResolution * unitScale);
-      var scale_y= (double)(1.0 / bitmap.VerticalResolution * unitScale);
+      var scale_x = (double)(1.0 / systemBitmap.HorizontalResolution * unitScale);
+      var scale_y = (double)(1.0 / systemBitmap.VerticalResolution * unitScale);
 
       // I'm not convinced this is useful...
       if (true)
@@ -67,13 +65,13 @@ namespace Vectorize
         var format = $"F{doc.DistanceDisplayPrecision}";
 
         // Print image size in pixels
-        RhinoApp.WriteLine("Image size in pixels: {0} x {1}", bitmap.Width, bitmap.Height);
+        RhinoApp.WriteLine("Image size in pixels: {0} x {1}", systemBitmap.Width, systemBitmap.Height);
 
         if (doc.ModelUnitSystem == UnitSystem.Inches)
         {
           // Print image size in inches
-          var width = (double)(bitmap.Width / bitmap.HorizontalResolution);
-          var height = (double)(bitmap.Height / bitmap.VerticalResolution);
+          var width = (double)(systemBitmap.Width / systemBitmap.HorizontalResolution);
+          var height = (double)(systemBitmap.Height / systemBitmap.VerticalResolution);
           RhinoApp.WriteLine("Image size in inches: {0} x {1}",
             width.ToString(format, CultureInfo.InvariantCulture),
             height.ToString(format, CultureInfo.InvariantCulture)
@@ -81,8 +79,8 @@ namespace Vectorize
         }
         else
         {
-          var width = (double)(bitmap.Width / bitmap.HorizontalResolution * unitScale);
-          var height = (double)(bitmap.Height / bitmap.VerticalResolution * unitScale);
+          var width = (double)(systemBitmap.Width / systemBitmap.HorizontalResolution * unitScale);
+          var height = (double)(systemBitmap.Height / systemBitmap.VerticalResolution * unitScale);
           RhinoApp.WriteLine("Image size in {0}: {1} x {2}",
             doc.ModelUnitSystem.ToString().ToLower(),
             width.ToString(format, CultureInfo.InvariantCulture),
@@ -92,37 +90,36 @@ namespace Vectorize
       }
 
       // Convert the bitmap to an Eto bitmap
-      var eto_bitmap = ConvertBitmapToEto(bitmap);
-      if (null == eto_bitmap)
+      var etoBitmap = BitmapHelpers.ConvertBitmapToEto(systemBitmap);
+      if (null == etoBitmap)
       {
         RhinoApp.WriteLine("Unable to convert image to Eto bitmap.");
         return Result.Failure;
       }
 
-      // This should prevent Eto.Drawing.BitmapData.GetPixels() from throwing an exception
-      if (!IsCompatibleBitmap(eto_bitmap))
+      if (!BitmapHelpers.IsCompatibleBitmap(etoBitmap))
       {
-        var temp_bitmap = MakeCompatibleBitmap(eto_bitmap);
-        if (null == temp_bitmap)
+        var tempBitmap = BitmapHelpers.MakeCompatibleBitmap(etoBitmap);
+        if (null == tempBitmap)
         {
           RhinoApp.WriteLine("The image has an incompatible pixel format. Please select an image with 24 or 32 bits per pixel, or 8 bit indexed.");
           return Result.Failure;
         }
         else
         {
-          eto_bitmap = temp_bitmap;
+          etoBitmap = tempBitmap;
         }
       }
 
       // This bitmap is not needed anymore, so dispose of it
-      bitmap.Dispose();
+      systemBitmap.Dispose();
 
       // Get persistent settings
       var parameters = new PotraceParameters();
       parameters.GetSettings(Settings);
 
       // Create the conduit, which does most of the work
-      var conduit = new VectorizeConduit(eto_bitmap, parameters, scale_x, scale_y) { Enabled = true };
+      var conduit = new VectorizeConduit(etoBitmap, parameters, scale_x, scale_y) { Enabled = true };
 
       if (mode == RunMode.Interactive)
       {
@@ -155,9 +152,6 @@ namespace Vectorize
           var optThreshold = new OptionDouble(parameters.Threshold, 0.0, 100.0);
           var idxThreshold = go.AddOptionDouble("Threshold", ref optThreshold, "Image brightness threshold");
 
-          // TurnPolicy
-          //var idxTurnPolicy = go.AddOptionEnumList("TurnPolicy"), parameters.TurnPolicy);
-
           // Turdsize
           var optTurdSize = new OptionInteger(parameters.TurdSize, 0, 100);
           var idxTurdSize = go.AddOptionInteger("Speckles", ref optTurdSize, "Image despeckle threshold");
@@ -165,10 +159,6 @@ namespace Vectorize
           // AlphaMax
           var optAlphaMax = new OptionDouble(parameters.AlphaMax, 0.0, 1.34);
           var idxAlphaMax = go.AddOptionDouble("Corners", ref optAlphaMax, "Corner detection threshold");
-
-          // OptimizeCurve
-          //var optOptimizeCurve = new OptionToggle(parameters.OptimizeCurve, "No", "Yes");
-          //var idxOptimizeCurve = go.AddOptionToggle("Optimizing", ref optOptimizeCurve);
 
           // OptimizeTolerance
           var optOptimizeTolerance = new OptionDouble(parameters.OptimizeTolerance, 0.0, 1.0);
@@ -195,14 +185,6 @@ namespace Vectorize
                 continue;
               }
 
-              // TurnPolicy
-              //if (idxTurnPolicy == option.Index)
-              //{
-              //  var list = Enum.GetValues(typeof(PotraceTurnPolicy)).Cast<PotraceTurnPolicy>().ToList();
-              //  parameters.TurnPolicy = list[option.CurrentListOptionIndex];
-              //  continue;
-              //}
-
               // Turdsize
               if (idxTurdSize == option.Index)
               {
@@ -223,13 +205,6 @@ namespace Vectorize
                 parameters.IncludeBorder = optIncludeBorder.CurrentValue;
                 continue;
               }
-
-              // OptimizeCurve
-              //if (idxOptimizeCurve == option.Index)
-              //{
-              //  parameters.OptimizeCurve = optOptimizeCurve.CurrentValue;
-              //  continue;
-              //}
 
               // OptimizeTolerance
               if (idxOptimizeTolerance == option.Index)
@@ -262,6 +237,8 @@ namespace Vectorize
       // Group curves
       var attributes = doc.CreateDefaultAttributes();
       attributes.AddToGroup(doc.Groups.Add());
+
+      // Add curves to document
       for (var i = 0; i < conduit.Curves.Count; i++)
       {
         if (i == 0 && !parameters.IncludeBorder) // skip border
@@ -278,6 +255,7 @@ namespace Vectorize
       // Set persistent settings
       parameters.SetSettings(Settings);
 
+      // Done!
       return Result.Success;
     }
 
@@ -349,62 +327,5 @@ namespace Vectorize
 
       return path;
     }
-
-    /// <summary>
-    /// Convert a System.Drawing.Bitmap to a Eto.Drawing.Bitmap
-    /// </summary>
-    private Eto.Drawing.Bitmap ConvertBitmapToEto(Bitmap bitmap)
-    {
-      if (null == bitmap)
-        return null;
-
-      using (var stream = new MemoryStream())
-      {
-        bitmap.Save(stream, ImageFormat.Png);
-        stream.Seek(0, SeekOrigin.Begin);
-        var eto_bitmap = new Eto.Drawing.Bitmap(stream);
-        return eto_bitmap;
-      }
-    }
-
-    /// <summary>
-    /// Determines if the bitmap an Eto BitmapData.GetPixel-compatible bitmap
-    /// </summary>
-    private bool IsCompatibleBitmap(Eto.Drawing.Bitmap bitmap)
-    {
-      if (null == bitmap)
-        return false;
-
-      using (var bitmapData = bitmap.Lock())
-      {
-        if (bitmapData.BytesPerPixel == 4)
-          return true;
-
-        if (bitmapData.BytesPerPixel == 3)
-          return true;
-
-        if (bitmapData.Image is Eto.Drawing.IndexedBitmap && bitmapData.BytesPerPixel == 1)
-          return true;
-      }
-
-      return false;
-    }
-
-    /// <summary>
-    /// Makes an Eto BitmapData.GetPixel-compatible bitmap
-    /// </summary>
-    private Eto.Drawing.Bitmap MakeCompatibleBitmap(Eto.Drawing.Bitmap bitmap)
-    {
-      if (null == bitmap)
-        return null;
-
-      var size = new Eto.Drawing.Size(bitmap.Width, bitmap.Height);
-      var bmp = new Eto.Drawing.Bitmap(size, Eto.Drawing.PixelFormat.Format24bppRgb);
-      using (var graphics = new Eto.Drawing.Graphics(bmp))
-        graphics.DrawImage(bitmap, 0, 0);
-
-      return bmp;
-    }
-
   }
 }
