@@ -42,11 +42,12 @@ namespace Vectorize
       // Create controls and define behaviors
       var parameters = m_conduit.Parameters;
 
-      // Threshold % (0.0, 100.0)
-      var sldThreshold = new Rhino.UI.Controls.Slider(this, true, null, null)
+      // Threshold (0.0, 100.0)
+      var sldThreshold = new Rhino.UI.Controls.Slider(this, true)
       {
         Decimals = 2,
-        ToolTip = PotraceTooltips.Threshold
+        DrawTextLabels = true,
+        ToolTip = PotraceStrings.ThresholdTooltip(false)
       };
       sldThreshold.SetMinMax(0.0, 100.0);
       sldThreshold.Value1 = parameters.Threshold * 100.0;
@@ -63,10 +64,11 @@ namespace Vectorize
       };
 
       // TurdSize (0 to 100)
-      var sldTurdSize = new Rhino.UI.Controls.Slider(this, false, null, null)
+      var sldTurdSize = new Rhino.UI.Controls.Slider(this, false)
       {
         Decimals = 0,
-        ToolTip = PotraceTooltips.TurdSize
+        DrawTextLabels = true,
+        ToolTip = PotraceStrings.TurdSizeTooltip(false)
       };
       sldTurdSize.SetMinMax(0.0, 100.0);
       sldTurdSize.Value1 = parameters.TurdSize;
@@ -83,10 +85,11 @@ namespace Vectorize
       };
 
       // AlphaMax (0.0, 1.34)
-      var sldAlphaMax = new Rhino.UI.Controls.Slider(this, false, null, null)
+      var sldAlphaMax = new Rhino.UI.Controls.Slider(this, false)
       {
         Decimals = 2,
-        ToolTip = PotraceTooltips.AlphaMax,
+        DrawTextLabels = true,
+        ToolTip = PotraceStrings.AlphaMaxTooltip(false)
       };
       sldAlphaMax.SetMinMax(0.0, 1.34);
       sldAlphaMax.Value1 = parameters.AlphaMax;
@@ -103,10 +106,11 @@ namespace Vectorize
       };
 
       // OptimizeTolerance (0.0, 1.0)
-      var sldOptimizeTolerance = new Rhino.UI.Controls.Slider(this, false, null, null)
+      var sldOptimizeTolerance = new Rhino.UI.Controls.Slider(this, false)
       {
         Decimals = 2,
-        ToolTip = PotraceTooltips.OptimizeTolerance
+        DrawTextLabels = true,
+        ToolTip = PotraceStrings.OptimizeToleranceTooltip(false)
       };
       sldOptimizeTolerance.SetMinMax(0.0, 1.0);
       sldOptimizeTolerance.Value1 = parameters.OptimizeTolerance;
@@ -122,11 +126,12 @@ namespace Vectorize
         }
       };
 
+      // IncludeBorder
       var chkIncludeBorder = new CheckBox
       {
         Checked = parameters.IncludeBorder,
         ThreeState = false,
-        ToolTip = PotraceTooltips.IncludeBorder
+        ToolTip = PotraceStrings.IncludeBorderTooltip
       };
       chkIncludeBorder.CheckedChanged += (sender, args) =>
       {
@@ -134,8 +139,9 @@ namespace Vectorize
         UpdateAndRedraw();
       };
 
-      var btnReset = new Button { Text = "Restore Defaults" };
-      btnReset.Click += (sender, args) =>
+      // RestoreDefaults
+      var btnRestoreDefaults = new Button { Text = "Restore Defaults" };
+      btnRestoreDefaults.Click += (sender, args) =>
       {
         m_allow_update_and_redraw = false;
         parameters.SetDefaults();
@@ -154,13 +160,13 @@ namespace Vectorize
       layout.Rows.Add(new TableRow(new TableCell(new LabelSeparator { Text = "Vectorization options" }, true)));
 
       var table = new TableLayout { Padding = new Eto.Drawing.Padding(8, 0, 0, 0), Spacing = new Size(10, 8) };
-      table.Rows.Add(new TableRow(new TableCell(new Label() { Text = "Threshold" }), new TableCell(sldThreshold)));
-      table.Rows.Add(new TableRow(new TableCell(new Label() { Text = "Speckles" }), new TableCell(sldTurdSize)));
-      table.Rows.Add(new TableRow(new TableCell(new Label() { Text = "Smooth corners" }), new TableCell(sldAlphaMax)));
-      table.Rows.Add(new TableRow(new TableCell(new Label() { Text = "Optimize" }), new TableCell(sldOptimizeTolerance)));
-      table.Rows.Add(new TableRow(new TableCell(new Label() { Text = "Include border" }), new TableCell(chkIncludeBorder)));
+      table.Rows.Add(new TableRow(new TableCell(new Label { Text = PotraceStrings.ThresholdLabel(false) }), new TableCell(sldThreshold)));
+      table.Rows.Add(new TableRow(new TableCell(new Label { Text = PotraceStrings.TurdSizeLabel(true) }), new TableCell(sldTurdSize)));
+      table.Rows.Add(new TableRow(new TableCell(new Label { Text = PotraceStrings.AlphaMaxLabel(true) }), new TableCell(sldAlphaMax)));
+      table.Rows.Add(new TableRow(new TableCell(new Label { Text = PotraceStrings.OptimizeToleranceLabel(false) }), new TableCell(sldOptimizeTolerance)));
+      table.Rows.Add(new TableRow(new TableCell(new Label { Text = PotraceStrings.IncludeBorderLabel(true) }), new TableCell(chkIncludeBorder)));
       table.Rows.Add(null);
-      table.Rows.Add(new TableRow(new TableCell(new Label() { Text = "" }), new TableCell(btnReset)));
+      table.Rows.Add(new TableRow(new TableCell(new Label() { Text = "" }), new TableCell(btnRestoreDefaults)));
       layout.Rows.Add(table);
 
       return layout;

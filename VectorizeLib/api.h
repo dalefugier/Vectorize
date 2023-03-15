@@ -1,6 +1,6 @@
 #pragma once
 
-#if defined ON_RUNTIME_WINDOWS
+#if defined(_WINDOWS)
 #ifdef VECTORIZELIB_EXPORTS
 #define VECTORIZELIB_FUNCTION extern "C" __declspec(dllexport)
 #else
@@ -8,7 +8,7 @@
 #endif
 #endif
 
-#if defined ON_RUNTIME_APPLE
+#if defined(__APPLE)
 #ifdef VECTORIZELIB_EXPORTS
 #define VECTORIZELIB_FUNCTION extern "C" __attribute__ ((visibility ("default")))
 #endif

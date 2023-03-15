@@ -35,12 +35,12 @@ namespace VectorizeGh
     {
       var args = new PotraceParameters();
 
-      idxPath = pManager.AddTextParameter("Path", "P", PotraceTooltips.Path, GH_ParamAccess.item);
-      idxThreshold = pManager.AddNumberParameter("Threshold", "T", PotraceTooltips.Threshold, GH_ParamAccess.item, args.Threshold);
-      idxTurdSize = pManager.AddIntegerParameter("Speckles", "S", PotraceTooltips.TurdSize, GH_ParamAccess.item, args.TurdSize);
-      idxAlphaMax = pManager.AddNumberParameter("Corners", "C", PotraceTooltips.AlphaMax, GH_ParamAccess.item, args.AlphaMax);
-      idxOptimizeTolerance = pManager.AddNumberParameter("Optimize", "O", PotraceTooltips.OptimizeTolerance, GH_ParamAccess.item, args.OptimizeTolerance);
-      idxIncludeBorder = pManager.AddBooleanParameter("Border", "B", PotraceTooltips.IncludeBorder, GH_ParamAccess.item, args.IncludeBorder);
+      idxPath = pManager.AddTextParameter(PotraceStrings.PathLabel, "P", PotraceStrings.PathTooltip, GH_ParamAccess.item);
+      idxThreshold = pManager.AddNumberParameter(PotraceStrings.ThresholdLabel(false), "T", PotraceStrings.ThresholdTooltip(true), GH_ParamAccess.item, args.Threshold);
+      idxTurdSize = pManager.AddIntegerParameter(PotraceStrings.TurdSizeLabel(false), "S", PotraceStrings.TurdSizeTooltip(true), GH_ParamAccess.item, args.TurdSize);
+      idxAlphaMax = pManager.AddNumberParameter(PotraceStrings.AlphaMaxLabel(false), "C", PotraceStrings.AlphaMaxTooltip(true), GH_ParamAccess.item, args.AlphaMax);
+      idxOptimizeTolerance = pManager.AddNumberParameter(PotraceStrings.OptimizeToleranceLabel(false), "O", PotraceStrings.OptimizeToleranceTooltip(true), GH_ParamAccess.item, args.OptimizeTolerance);
+      idxIncludeBorder = pManager.AddBooleanParameter(PotraceStrings.IncludeBorderLabel(false), "B", PotraceStrings.IncludeBorderTooltip, GH_ParamAccess.item, args.IncludeBorder);
 
       // All but the path parameter are optional
       pManager[idxThreshold].Optional = true;

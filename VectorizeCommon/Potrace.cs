@@ -911,13 +911,68 @@ namespace VectorizeCommon
   /// <summary>
   /// Some re-usable tooltips.
   /// </summary>
-  public class PotraceTooltips
+  public class PotraceStrings
   {
-    public static string Path => "Image file path.";
-    public static string Threshold => "Image brightness threshold, from 0.0 (black) to 1.0 (white).";
-    public static string TurdSize => "Image despeckle threshold, from 0 to 100.";
-    public static string AlphaMax => "Corner detection threshold, from 0.0 (polygons) to 1.34 (no corner).";
-    public static string OptimizeTolerance => "Optimize paths by replacing sequences of Bézier segments with single segments. Range is from 0.0 to 1.0.";
-    public static string IncludeBorder => "Include border curve.";
+    public static string PathLabel => "Path";
+    public static string PathTooltip => "Image file path.";
+
+    public static string ThresholdLabel(bool verbose)
+    {
+      return verbose ? "Brightness threshold" : "Threshold";
+    }
+
+    public static string ThresholdTooltip(bool verbose)
+    {
+      var str = "Image brightness threshold.";
+      if (verbose)
+        str += " Range is from 0.0 (black) to 1.0 (white).";
+      return str;
+    }
+
+    public static string TurdSizeLabel(bool verbose)
+    {
+      return verbose ? "Speckles" : "Speckles";
+    }
+
+    public static string TurdSizeTooltip(bool verbose)
+    {
+      var str = "Image despeckle threshold.";
+      if (verbose)
+        str += " Range is from from 0 to 100.";
+      return str;
+    }
+
+    public static string AlphaMaxLabel(bool verbose)
+    {
+      return verbose ? "Smooth corners" : "Corners";
+    }
+
+    public static string AlphaMaxTooltip(bool verbose)
+    {
+      var str = "Corner detection threshold.";
+      if (verbose)
+        str += " Range is from 0.0 (polygons) to 1.34 (no corner).";
+      return str;
+    }
+
+    public static string OptimizeToleranceLabel(bool verbose)
+    {
+      return verbose ? "Optimize tolerance" : "Optimize";
+    }
+
+    public static string OptimizeToleranceTooltip(bool verbose)
+    {
+      var str = "Optimize paths by replacing sequences of Bézier segments with single segments.";
+      if (verbose)
+        str += " Range is from 0.0 to 1.0.";
+      return str;
+    }
+
+    public static string IncludeBorderLabel(bool verbose)
+    {
+      return verbose ? "Include border" : "Border";
+    }
+
+    public static string IncludeBorderTooltip => "Include border curve.";
   }
 }
