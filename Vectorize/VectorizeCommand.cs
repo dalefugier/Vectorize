@@ -14,10 +14,21 @@ namespace Vectorize
   /// </summary>
   public class VectorizeCommand : Command
   {
+    // Constructor
+    public VectorizeCommand()
+    {
+      Instance = this;
+    }
+
+    /// <summary>
+    /// Get the one and only instance of the Vectorize command.
+    /// </summary>
+    public static VectorizeCommand Instance { get; private set; }
+
     /// <summary>
     /// Command.EnglishName override
     /// </summary>
-    public override string EnglishName => LOC.COMMANDNAME("Vectorize");
+    public override string EnglishName => "Vectorize";
 
     /// <summary>
     /// Command.RunCommand override

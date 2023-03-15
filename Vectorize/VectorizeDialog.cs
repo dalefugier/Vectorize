@@ -1,10 +1,8 @@
 ﻿using Eto.Drawing;
 using Eto.Forms;
 using Rhino;
-using Rhino.UI;
 using Rhino.UI.Controls;
 using Rhino.UI.Forms;
-using System;
 using VectorizeCommon;
 
 namespace Vectorize
@@ -28,8 +26,7 @@ namespace Vectorize
 
       Resizable = false;
       ShowHelpButton = false;
-      Width = 350;
-      Title = "Vectorize";
+      Title = VectorizeCommand.Instance.EnglishName;
       Content = CreateTableLayout();
       Shown += (sender, e) => UpdateAndRedraw();
     }
@@ -47,7 +44,8 @@ namespace Vectorize
       {
         Decimals = 2,
         DrawTextLabels = true,
-        ToolTip = PotraceStrings.ThresholdTooltip(false)
+        ToolTip = PotraceStrings.ThresholdTooltip(false),
+        Width = 200
       };
       sldThreshold.SetMinMax(0.0, 100.0);
       sldThreshold.Value1 = parameters.Threshold * 100.0;
@@ -135,29 +133,37 @@ namespace Vectorize
       };
       chkIncludeBorder.CheckedChanged += (sender, args) =>
       {
-        parameters.IncludeBorder = chkIncludeBorder.Checked.Value;
-        UpdateAndRedraw();
+        if (m_allow_update_and_redraw)
+        {
+          m_allow_update_and_redraw = false;
+          parameters.IncludeBorder = chkIncludeBorder.Checked.Value;
+          m_allow_update_and_redraw = true;
+          UpdateAndRedraw();
+        }
       };
 
       // RestoreDefaults
       var btnRestoreDefaults = new Button { Text = "Restore Defaults" };
       btnRestoreDefaults.Click += (sender, args) =>
       {
-        m_allow_update_and_redraw = false;
-        parameters.SetDefaults();
-        sldThreshold.Value1 = parameters.Threshold * 100.0;
-        sldTurdSize.Value1 = parameters.TurdSize;
-        sldAlphaMax.Value1 = parameters.AlphaMax;
-        sldOptimizeTolerance.Value1 = parameters.OptimizeTolerance;
-        chkIncludeBorder.Checked = parameters.IncludeBorder;
-        m_allow_update_and_redraw = true;
-        UpdateAndRedraw();
+        if (m_allow_update_and_redraw)
+        {
+          m_allow_update_and_redraw = false;
+          parameters.SetDefaults();
+          sldThreshold.Value1 = parameters.Threshold * 100.0;
+          sldTurdSize.Value1 = parameters.TurdSize;
+          sldAlphaMax.Value1 = parameters.AlphaMax;
+          sldOptimizeTolerance.Value1 = parameters.OptimizeTolerance;
+          chkIncludeBorder.Checked = parameters.IncludeBorder;
+          m_allow_update_and_redraw = true;
+          UpdateAndRedraw();
+        }
       };
 
       // Layout the controls
 
-      var layout = new RhinoDialogTableLayout(false) { Spacing = new Eto.Drawing.Size(10, 8) };
-      layout.Rows.Add(new TableRow(new TableCell(new LabelSeparator { Text = "Vectorization options" }, true)));
+      var layout = new RhinoDialogTableLayout(false); // { Spacing = new Eto.Drawing.Size(10, 8) };
+      //layout.Rows.Add(new TableRow(new TableCell(new LabelSeparator { Text = "Vectorization options" }, true)));
 
       var table = new TableLayout { Padding = new Eto.Drawing.Padding(8, 0, 0, 0), Spacing = new Size(10, 8) };
       table.Rows.Add(new TableRow(new TableCell(new Label { Text = PotraceStrings.ThresholdLabel(false) }), new TableCell(sldThreshold)));
@@ -165,9 +171,11 @@ namespace Vectorize
       table.Rows.Add(new TableRow(new TableCell(new Label { Text = PotraceStrings.AlphaMaxLabel(true) }), new TableCell(sldAlphaMax)));
       table.Rows.Add(new TableRow(new TableCell(new Label { Text = PotraceStrings.OptimizeToleranceLabel(false) }), new TableCell(sldOptimizeTolerance)));
       table.Rows.Add(new TableRow(new TableCell(new Label { Text = PotraceStrings.IncludeBorderLabel(true) }), new TableCell(chkIncludeBorder)));
+      table.Rows.Add(new TableRow(new TableCell(new Label { Text = "" }), new TableCell(btnRestoreDefaults)));
       table.Rows.Add(null);
-      table.Rows.Add(new TableRow(new TableCell(new Label() { Text = "" }), new TableCell(btnRestoreDefaults)));
+
       layout.Rows.Add(table);
+      layout.Rows.Add(null);
 
       return layout;
     }

@@ -3,7 +3,6 @@ using Rhino.Geometry;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Security.Policy;
 
 namespace VectorizeCommon
 {
