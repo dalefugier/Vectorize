@@ -3,26 +3,17 @@ Vectorize is a free, open source image tracing plug-in for Rhino.
 
 <img width="128" height="128" src="https://github.com/dalefugier/Vectorize/raw/main/Tools/Vectorize.png">
 
-Vectorize is based off the famous [Potrace](http://potrace.sourceforge.net/) by Peter Selinger, whose application transforms a bitmap into a soft, scalable image made up of vectors. 
+Vectorize uses the famous [Potrace](http://potrace.sourceforge.net/) by Peter Selinger, whose application transforms a bitmap into a soft, scalable image made up of vectors. 
 
 ### Prerequisites
 
-The following tool is required to build Vectorize :
+The following tool is required to build Vectorize:
 
-- [Microsoft Visual Studio](https://visualstudio.microsoft.com/). Visual Studio comes in three editions: Community (free), Professional, and Enterprise. All of these editions will work.
-
+- [Microsoft Visual Studio](https://visualstudio.microsoft.com/)
+- 
+- [Apple Xcode](https://developer.apple.com/xcode/)
+ 
 Note, the solution uses the [RhinoCommon](https://www.nuget.org/packages/rhinocommon) package available on [NuGet](https://www.nuget.org/).
-
-### Compiling
-
-1. Clone the repository. At a command prompt, enter the following command:
-
-```
-git clone https://github.com/dalefugier/VectorizeNew
-```
-
-2. Open the `Vectorize.sln` solution file in Visual Studio.
-3. Press <kbd>F7</kbd>, or click *Build > Build Solution*  to build the solution.
 
 ## License
 
