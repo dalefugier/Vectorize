@@ -90,7 +90,7 @@ namespace Vectorize
       {
         m_potraceBitmap = new PotraceBitmap(m_etoBitmap, m_parameters.Threshold);
       }
-      else if (m_potraceBitmap.Treshold != m_parameters.Threshold)
+      else if (m_potraceBitmap.Threshold != m_parameters.Threshold)
       {
         m_potraceBitmap.Dispose();
         m_potraceBitmap = new PotraceBitmap(m_etoBitmap, m_parameters.Threshold);

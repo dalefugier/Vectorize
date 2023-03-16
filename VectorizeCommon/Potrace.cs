@@ -3,6 +3,7 @@ using Rhino.Geometry;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace VectorizeCommon
 {
@@ -460,26 +461,22 @@ namespace VectorizeCommon
 
       brightnessThreshold = RhinoMath.Clamp(brightnessThreshold, 0.0, 1.0);
 
-      //var domain = new Interval(0, 255);
-      //var t = (int) domain.ParameterAt(threshold);
-
       m_ptr = UnsafeNativeMethods.potrace_bitmap_New(bitmap.Width, bitmap.Height);
       if (m_ptr != IntPtr.Zero)
       {
         // Save some values for later
         Width = bitmap.Width;
         Height = bitmap.Height;
-        Treshold = brightnessThreshold;
+        Threshold = brightnessThreshold;
 
         const double brightnessFloor = 0.0;
-
         var floor = 3.0 * brightnessFloor * 256.0;
         var cutoff = 3.0 * brightnessThreshold * 256.0;
 
         // Thresholding...
         using (var bitmapData = bitmap.Lock())
         {
-          for (var y = 0; y < bitmap.Height; y++)
+          Parallel.For(0, bitmap.Height, y =>
           {
             for (var x = 0; x < bitmap.Width; x++)
             {
@@ -492,12 +489,10 @@ namespace VectorizeCommon
               PutPixel(x, y, black);
             }
           }
+          );
         }
 
-        //if (m_invert)
-        //  Invert();
-
-        // Potrace bitmaps use a cartesian coordinate system
+        // Potrace bitmaps use a Cartesian coordinate system
         Flip();
       }
     }
@@ -519,7 +514,7 @@ namespace VectorizeCommon
     /// <summary>
     /// The threshold used to create the bitmap.
     /// </summary>
-    public double Treshold { get; private set; } = 0.5;
+    public double Threshold { get; private set; } = 0.5;
 
     #endregion // Properties
 
