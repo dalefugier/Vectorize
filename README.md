@@ -3,12 +3,6 @@ Vectorize is a free, open source image tracing plug-in for Rhino.
 
 <img width="128" height="128" src="https://github.com/dalefugier/Vectorize/raw/main/Tools/Vectorize.png">
 
-### Overview
-
-The inspiration for Vectorize comes from Gérard Bouteau, a long time Rhino user, trainer, and programmer, who developed a plug-in named [Trace](https://www.food4rhino.com/app/trace) for Rhino 6. Unfortunately for all of us, Gérard passed away unexpectedly in the spring of 2020. Because of this untimely passing, he was never able to port his popular plug-in to Rhino 7 and beyond.
-
-### Details
-
 Vectorize is based off the famous [Potrace](http://potrace.sourceforge.net/) by Peter Selinger, whose application transforms a bitmap into a soft, scalable image made up of vectors. 
 
 ### Prerequisites
