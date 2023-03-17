@@ -39,6 +39,7 @@ VECTORIZELIB_FUNCTION void potrace_bitmap_SetPixel(potrace_bitmap_t* pBitmap, in
 VECTORIZELIB_FUNCTION void potrace_bitmap_ClearPixel(potrace_bitmap_t* pBitmap, int x, int y);
 VECTORIZELIB_FUNCTION void potrace_bitmap_InvertPixel(potrace_bitmap_t* pBitmap, int x, int y);
 VECTORIZELIB_FUNCTION void potrace_bitmap_PutPixel(potrace_bitmap_t* pBitmap, int x, int y, bool set);
+VECTORIZELIB_FUNCTION void potrace_bitmap_PutPixels(potrace_bitmap_t* pBitmap, int count, /*ARRAY*/const bool* pValues);
 
 /////////////////////////////////////////////////
 // potrace_state_t helpers

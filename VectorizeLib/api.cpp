@@ -148,7 +148,6 @@ VECTORIZELIB_FUNCTION void potrace_bitmap_Flip(potrace_bitmap_t* pBitmap)
     bm_flip(pBitmap);
 }
 
-
 VECTORIZELIB_FUNCTION bool potrace_bitmap_GetPixel(potrace_bitmap_t* pBitmap, int x, int y)
 {
   int rc = 0;
@@ -179,6 +178,26 @@ VECTORIZELIB_FUNCTION void potrace_bitmap_PutPixel(potrace_bitmap_t* pBitmap, in
 {
   if (pBitmap)
     BM_PUT(pBitmap, x, y, set ? 1 : 0);
+}
+
+VECTORIZELIB_FUNCTION void potrace_bitmap_PutPixels(potrace_bitmap_t* pBitmap, int count, /*ARRAY*/const bool* pValues)
+{
+  if (pBitmap && pValues)
+  {
+    const int width = pBitmap->w;
+    const int height = pBitmap->h;
+    if (count == width * height)
+    {
+      int i = 0;
+      for (int y = 0; y < height; y++)
+      {
+        for (int x = 0; x < width; x++)
+        {
+          BM_PUT(pBitmap, x, y, pValues[i++] ? 1 : 0);
+        }
+      }
+    }
+  }
 }
 
 /////////////////////////////////////////////////

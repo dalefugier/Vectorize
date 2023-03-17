@@ -66,6 +66,9 @@ namespace VectorizeCommon
     [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
     internal static extern void potrace_bitmap_PutPixel(IntPtr pBitmap, int x, int y, [MarshalAs(UnmanagedType.U1)] bool set);
 
+    [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern bool potrace_bitmap_PutPixels(IntPtr pBitmap, int count, [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.U1)] bool[] pValues);
+
     #endregion // PotraceBitmap helpers
 
     #region Potrace helpers

@@ -473,6 +473,8 @@ namespace VectorizeCommon
         var floor = 3.0 * brightnessFloor * 256.0;
         var cutoff = 3.0 * brightnessThreshold * 256.0;
 
+        var values = new bool[Width * Height];
+
         // Thresholding...
         using (var bitmapData = bitmap.Lock())
         {
@@ -486,11 +488,13 @@ namespace VectorizeCommon
               var sample = color.Rb + color.Gb + color.Bb;
               var brightness = sample * alpha / 256 + white;
               var black = brightness >= floor && brightness < cutoff;
-              PutPixel(x, y, black);
+              values[x + Width * y] = black;
             }
           }
           );
         }
+
+        UnsafeNativeMethods.potrace_bitmap_PutPixels(m_ptr, values.Length, values);
 
         // Potrace bitmaps use a Cartesian coordinate system
         Flip();
