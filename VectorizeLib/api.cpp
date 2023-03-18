@@ -116,6 +116,30 @@ VECTORIZELIB_FUNCTION potrace_bitmap_t* potrace_bitmap_New(int width, int height
   return rc;
 }
 
+VECTORIZELIB_FUNCTION potrace_bitmap_t* potrace_bitmap_New2(int width, int height, int count, /*ARRAY*/const bool* pValues)
+{
+  potrace_bitmap_t* rc = nullptr;
+  if (width > 0 && height > 0 && width * height == count && pValues)
+  {
+    rc = bm_new(width, height);
+    if (rc)
+    {
+      int i = 0;
+      for (int y = 0; y < height; y++)
+      {
+        for (int x = 0; x < width; x++)
+        {
+          if (pValues[i])
+            BM_SET(rc, x, y);
+          i++;
+        }
+      }
+    }
+  }
+  return rc;
+}
+
+
 VECTORIZELIB_FUNCTION void potrace_bitmap_Delete(potrace_bitmap_t* pBitmap)
 {
   if (pBitmap)
@@ -178,26 +202,6 @@ VECTORIZELIB_FUNCTION void potrace_bitmap_PutPixel(potrace_bitmap_t* pBitmap, in
 {
   if (pBitmap)
     BM_PUT(pBitmap, x, y, set ? 1 : 0);
-}
-
-VECTORIZELIB_FUNCTION void potrace_bitmap_PutPixels(potrace_bitmap_t* pBitmap, int count, /*ARRAY*/const bool* pValues)
-{
-  if (pBitmap && pValues)
-  {
-    const int width = pBitmap->w;
-    const int height = pBitmap->h;
-    if (count == width * height)
-    {
-      int i = 0;
-      for (int y = 0; y < height; y++)
-      {
-        for (int x = 0; x < width; x++)
-        {
-          BM_PUT(pBitmap, x, y, pValues[i++] ? 1 : 0);
-        }
-      }
-    }
-  }
 }
 
 /////////////////////////////////////////////////

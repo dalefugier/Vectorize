@@ -252,7 +252,7 @@ namespace VectorizeCommon
     /// </summary>
     public bool Invert
     {
-      get => m_invert; 
+      get => m_invert;
       set => m_invert = value;
     }
     private bool m_invert = false;
@@ -459,45 +459,48 @@ namespace VectorizeCommon
       if (null == bitmap)
         throw new ArgumentNullException(nameof(bitmap));
 
+      if (0 == bitmap.Width || 0 == bitmap.Height)
+        return;
+
       brightnessThreshold = RhinoMath.Clamp(brightnessThreshold, 0.0, 1.0);
 
-      m_ptr = UnsafeNativeMethods.potrace_bitmap_New(bitmap.Width, bitmap.Height);
+      // Do brightness thresholding
+      const double brightnessFloor = 0.0;
+      var floor = 3.0 * brightnessFloor * 256.0;
+      var cutoff = 3.0 * brightnessThreshold * 256.0;
+      var values = new bool[bitmap.Width * bitmap.Height];
+
+      using (var bitmapData = bitmap.Lock())
+      {
+        Parallel.For(0, bitmap.Height, y =>
+        {
+          for (var x = 0; x < bitmap.Width; x++)
+          {
+            var color = bitmapData.GetPixel(x, y);
+            var alpha = color.Ab;
+            var white = 3 * (255 - alpha);
+            var sample = color.Rb + color.Gb + color.Bb;
+            var brightness = sample * alpha / 256 + white;
+            var black = brightness >= floor && brightness < cutoff;
+            values[x + bitmap.Width * y] = black;
+          }
+        }
+        );
+      }
+
+      // Rather than calling potrace_bitmap_New and then potrace_bitmap_PutPixel
+      // width * height times, do it all at once (genius).
+
+      m_ptr = UnsafeNativeMethods.potrace_bitmap_New2(bitmap.Width, bitmap.Height, values.Length, values);
       if (m_ptr != IntPtr.Zero)
       {
+        // Potrace bitmaps use a Cartesian coordinate system
+        Flip();
+
         // Save some values for later
         Width = bitmap.Width;
         Height = bitmap.Height;
         Threshold = brightnessThreshold;
-
-        const double brightnessFloor = 0.0;
-        var floor = 3.0 * brightnessFloor * 256.0;
-        var cutoff = 3.0 * brightnessThreshold * 256.0;
-
-        var values = new bool[Width * Height];
-
-        // Thresholding...
-        using (var bitmapData = bitmap.Lock())
-        {
-          Parallel.For(0, bitmap.Height, y =>
-          {
-            for (var x = 0; x < bitmap.Width; x++)
-            {
-              var color = bitmapData.GetPixel(x, y);
-              var alpha = color.Ab;
-              var white = 3 * (255 - alpha);
-              var sample = color.Rb + color.Gb + color.Bb;
-              var brightness = sample * alpha / 256 + white;
-              var black = brightness >= floor && brightness < cutoff;
-              values[x + Width * y] = black;
-            }
-          }
-          );
-        }
-
-        UnsafeNativeMethods.potrace_bitmap_PutPixels(m_ptr, values.Length, values);
-
-        // Potrace bitmaps use a Cartesian coordinate system
-        Flip();
       }
     }
 

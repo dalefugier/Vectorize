@@ -29,6 +29,7 @@ VECTORIZELIB_FUNCTION int potrace_param_GetSetInt(potrace_param_t* pParam, int w
 // potrace_bitmap_t helpers
 
 VECTORIZELIB_FUNCTION potrace_bitmap_t* potrace_bitmap_New(int width, int height);
+VECTORIZELIB_FUNCTION potrace_bitmap_t* potrace_bitmap_New2(int width, int height, int count, /*ARRAY*/const bool* pValues);
 VECTORIZELIB_FUNCTION void potrace_bitmap_Delete(potrace_bitmap_t* pBitmap);
 VECTORIZELIB_FUNCTION void potrace_bitmap_Clear(potrace_bitmap_t* pBitmap);
 VECTORIZELIB_FUNCTION potrace_bitmap_t* potrace_bitmap_Duplicate(potrace_bitmap_t* pBitmap);
@@ -39,7 +40,6 @@ VECTORIZELIB_FUNCTION void potrace_bitmap_SetPixel(potrace_bitmap_t* pBitmap, in
 VECTORIZELIB_FUNCTION void potrace_bitmap_ClearPixel(potrace_bitmap_t* pBitmap, int x, int y);
 VECTORIZELIB_FUNCTION void potrace_bitmap_InvertPixel(potrace_bitmap_t* pBitmap, int x, int y);
 VECTORIZELIB_FUNCTION void potrace_bitmap_PutPixel(potrace_bitmap_t* pBitmap, int x, int y, bool set);
-VECTORIZELIB_FUNCTION void potrace_bitmap_PutPixels(potrace_bitmap_t* pBitmap, int count, /*ARRAY*/const bool* pValues);
 
 /////////////////////////////////////////////////
 // potrace_state_t helpers

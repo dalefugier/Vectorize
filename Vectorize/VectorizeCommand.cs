@@ -124,6 +124,7 @@ namespace Vectorize
 
       // This bitmap is not needed anymore, so dispose of it
       systemBitmap.Dispose();
+      systemBitmap = null;
 
       // Get persistent settings
       var parameters = new PotraceParameters();
