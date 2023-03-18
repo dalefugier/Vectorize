@@ -37,7 +37,7 @@ namespace VectorizeCommon
 
     [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
     internal static extern IntPtr potrace_bitmap_New2(int width, int height, int count, [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.U1)] bool[] pValues);
-
+   
     [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
     internal static extern void potrace_bitmap_Delete(IntPtr pBitmap);
 
