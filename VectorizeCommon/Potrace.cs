@@ -624,7 +624,7 @@ namespace VectorizeCommon
     #region Housekeeping
 
     // potrace_path_t*
-    private IntPtr m_ptr = IntPtr.Zero;
+    private readonly IntPtr m_ptr = IntPtr.Zero;
 
     #endregion // Housekeeping
 
@@ -642,66 +642,8 @@ namespace VectorizeCommon
 
     #region Properties
 
-    /// <summary>
-    /// The approximate magnitude of the area enclosed by the curve.
-    /// </summary>
-    public int Area
-    {
-      get => UnsafeNativeMethods.potrace_path_Area(m_ptr);
-    }
-
-    /// <summary>
-    /// True ('+') or false ('-') depending on orientation.
-    /// </summary>
-    public bool Sign
-    {
-      get => UnsafeNativeMethods.potrace_path_Sign(m_ptr);
-    }
-
-    /// <summary>
-    /// Get the Rhino curve.
-    /// </summary>
-    public Curve Curve
-    {
-      get
-      {
-        var count = SegmentCount;
-        if (0 == count)
-          return null;
-
-        var curve = new PolyCurve();
-        for (var i = 0; i < count; i++)
-        {
-          var tag = SegmentTag(i);
-          switch (tag)
-          {
-            case SegmentType.Corner:
-              {
-                var points = SegmentCornerPoints(i);
-                if (3 == points.Length)
-                {
-                  var polyline = new PolylineCurve(points);
-                  curve.AppendSegment(polyline);
-                }
-              }
-              break;
-            case SegmentType.Curve:
-              {
-                var points = SegmentCurvePoints(i);
-                if (4 == points.Length)
-                {
-                  var bezier = new Rhino.Geometry.BezierCurve(points);
-                  curve.AppendSegment(bezier.ToNurbsCurve());
-                }
-              }
-              break;
-          }
-        }
-
-        return curve.IsValid ? curve : null;
-      }
-
-    }
+    private const int POINT_STRIDE = 2; // A point has two doubles
+    private const int CURVE_STRIDE = 4; // A curve segment has four points
 
     /// <summary>
     /// Gets the next PotracePath.
@@ -715,74 +657,51 @@ namespace VectorizeCommon
       }
     }
 
+    /// <summary>
+    /// Gets the path curve.
+    /// </summary>
+    public Curve Curve
+    {
+      get
+      {
+        var count = UnsafeNativeMethods.potrace_path_SegmentCount(m_ptr); ;
+        if (0 == count)
+          return null;
+
+        var values = new double[count * POINT_STRIDE * CURVE_STRIDE];
+        if (!UnsafeNativeMethods.potrace_path_SegmentPoints(m_ptr, values.Length, values))
+          return null;
+
+        var polyCurve = new PolyCurve();
+
+        var i = 0;
+        for (var c = 0; c < count; c++)
+        {
+          var points = new Point3d[CURVE_STRIDE];
+          for (var p = 0; p < CURVE_STRIDE; p++)
+            points[p] = new Point3d(values[i++], values[i++], 0.0);
+
+          if (points[1].IsValid)
+          {
+            var bezier = new Rhino.Geometry.BezierCurve(points);
+            polyCurve.AppendSegment(bezier.ToNurbsCurve());
+          }
+          else
+          {
+            var polyline = new PolylineCurve(new Point3d[] { points[0], points[2], points[3] });
+            polyCurve.AppendSegment(polyline);
+          }
+        }
+
+        if (!polyCurve.IsValid) 
+          return null;
+
+        var curve = polyCurve.CleanUp();
+        return curve ?? polyCurve;
+      }
+    }
+
     #endregion // Properties
-
-    #region Private properties
-
-    /// <summary>
-    /// Get the number of curve segments.
-    /// </summary>
-    private int SegmentCount => UnsafeNativeMethods.potrace_path_SegmentCount(m_ptr);
-
-    /// <summary>
-    /// Potrace curve segment type
-    /// </summary>
-    private enum SegmentType
-    {
-      None = 0,
-      Curve = 1,
-      Corner = 2,
-    }
-
-    /// <summary>
-    /// Returns the type of curve segment.
-    /// </summary>
-    /// <param name="index">The segment index.</param>
-    /// <returns>The tag.</returns>
-    private SegmentType SegmentTag(int index)
-    {
-      return (SegmentType)UnsafeNativeMethods.potrace_path_SegmentTag(m_ptr, index);
-    }
-
-    /// <summary>
-    /// Get the 3 points for a POTRACE_CORNER.
-    /// </summary>
-    /// <param name="index">The segment index.</param>
-    /// <returns>The points.</returns>
-    private Point3d[] SegmentCornerPoints(int index)
-    {
-      var vertices = new double[6]; // 3- 2d points
-      var rc = UnsafeNativeMethods.potrace_path_SegmentCornerPoints(m_ptr, index, vertices.Length, vertices);
-      if (rc)
-      {
-        var points = new List<Point3d>(3);
-        for (var vi = 0; vi < vertices.Length; vi += 2)
-          points.Add(new Point3d(vertices[vi], vertices[vi + 1], 0.0));
-        return points.ToArray();
-      }
-      return new Point3d[0];
-    }
-
-    /// <summary>
-    /// Get the 4 points for a POTRACE_CURVETO.
-    /// </summary>
-    /// <param name="index"></param>
-    /// <returns>The points.</returns>
-    private Point3d[] SegmentCurvePoints(int index)
-    {
-      var vertices = new double[8]; // 4- 2d points
-      var rc = UnsafeNativeMethods.potrace_path_SegmentCurvePoints(m_ptr, index, vertices.Length, vertices);
-      if (rc)
-      {
-        var points = new List<Point3d>(3);
-        for (var vi = 0; vi < vertices.Length; vi += 2)
-          points.Add(new Point3d(vertices[vi], vertices[vi + 1], 0.0));
-        return points.ToArray();
-      }
-      return new Point3d[0];
-    }
-
-    #endregion // Private properties
   }
 
   /// <summary>
@@ -898,7 +817,7 @@ namespace VectorizeCommon
 
       var ptr_const_bitmap = bitmap.ConstPointer();
       var ptr_const_param = parameters.ConstPointer();
-      var ptr = UnsafeNativeMethods.potrace_state_Trace(ptr_const_bitmap, ptr_const_param);
+      var ptr = UnsafeNativeMethods.potrace_state_New(ptr_const_bitmap, ptr_const_param);
 
       GC.KeepAlive(bitmap);
       GC.KeepAlive(parameters);

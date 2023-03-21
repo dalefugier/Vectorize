@@ -5,6 +5,10 @@
 #include "auxiliary.h"
 #include "api.h"
 
+#define UNSET_POSITIVE_VALUE 1.23432101234321e+308
+#define UNSET_VALUE -UNSET_POSITIVE_VALUE
+#define POINT_STRIDE 2 // A point has two doubles
+#define CURVE_STRIDE 4 // A curve segment has four points
 #define CLAMP(V,L,H) ( (V) < (L) ? (L) : ( (V) > (H) ? (H) : (V) ) )
 
 /////////////////////////////////////////////////
@@ -206,7 +210,7 @@ VECTORIZELIB_FUNCTION void potrace_bitmap_PutPixel(potrace_bitmap_t* pBitmap, in
 /////////////////////////////////////////////////
 // potrace_state_t helpers
 
-VECTORIZELIB_FUNCTION potrace_state_t* potrace_state_Trace(potrace_bitmap_t* pBitmap, potrace_param_t* pParam)
+VECTORIZELIB_FUNCTION potrace_state_t* potrace_state_New(potrace_bitmap_t* pBitmap, potrace_param_t* pParam)
 {
   potrace_state_t* rc = nullptr;
   if (pBitmap && pParam)
@@ -234,7 +238,7 @@ VECTORIZELIB_FUNCTION void potrace_state_Delete(potrace_state_t* pState)
     potrace_state_free(pState);
 }
 
-VECTORIZELIB_FUNCTION potrace_path_t* potrace_state_PathList(potrace_state_t* pState)
+VECTORIZELIB_FUNCTION potrace_path_t* potrace_state_PathList(const potrace_state_t* pState)
 {
   potrace_path_t* rc = nullptr;
   if (pState)
@@ -245,23 +249,7 @@ VECTORIZELIB_FUNCTION potrace_path_t* potrace_state_PathList(potrace_state_t* pS
 /////////////////////////////////////////////////
 // potrace_path_t helpers
 
-VECTORIZELIB_FUNCTION int potrace_path_Area(potrace_path_t* pPath)
-{
-  int rc = 0;
-  if (pPath)
-    rc = pPath->area;
-  return rc;
-}
-
-VECTORIZELIB_FUNCTION bool potrace_path_Sign(potrace_path_t* pPath)
-{
-  bool rc = true;
-  if (pPath)
-    rc = (pPath->sign == '+') ? true : false;
-  return rc;
-}
-
-VECTORIZELIB_FUNCTION potrace_path_t* potrace_path_Next(potrace_path_t* pPath)
+VECTORIZELIB_FUNCTION potrace_path_t* potrace_path_Next(const potrace_path_t* pPath)
 {
   potrace_path_t* rc = nullptr;
   if (pPath && pPath->next)
@@ -269,7 +257,7 @@ VECTORIZELIB_FUNCTION potrace_path_t* potrace_path_Next(potrace_path_t* pPath)
   return rc;
 }
 
-VECTORIZELIB_FUNCTION int potrace_path_SegmentCount(potrace_path_t* pPath)
+VECTORIZELIB_FUNCTION int potrace_path_SegmentCount(const potrace_path_t* pPath)
 {
   int rc = 0;
   if (pPath)
@@ -277,7 +265,45 @@ VECTORIZELIB_FUNCTION int potrace_path_SegmentCount(potrace_path_t* pPath)
   return rc;
 }
 
-VECTORIZELIB_FUNCTION int potrace_path_SegmentTag(potrace_path_t* pPath, int index)
+VECTORIZELIB_FUNCTION bool potrace_path_SegmentPoints(const potrace_path_t* pPath, int bufferSize, /*ARRAY*/double* pBuffer)
+{
+  bool rc = false;
+  if (
+    pPath
+    && bufferSize >= 0
+    && bufferSize == pPath->curve.n * POINT_STRIDE * CURVE_STRIDE
+    && pBuffer
+    )
+  {
+    const int n = pPath->curve.n;
+    int i = 0;
+    for (int index = 0; index < pPath->curve.n; index++)
+    {
+      potrace_dpoint_t* c = pPath->curve.c[index];
+      potrace_dpoint_t* c1 = pPath->curve.c[mod(index - 1, n)];
+      pBuffer[i++] = c1[2].x;
+      pBuffer[i++] = c1[2].y;
+      if (POTRACE_CORNER == pPath->curve.tag[index])
+      {
+        pBuffer[i++] = UNSET_VALUE;
+        pBuffer[i++] = UNSET_VALUE;
+      }
+      else
+      {
+        pBuffer[i++] = c[0].x;
+        pBuffer[i++] = c[0].y;
+      }
+      pBuffer[i++] = c[1].x;
+      pBuffer[i++] = c[1].y;
+      pBuffer[i++] = c[2].x;
+      pBuffer[i++] = c[2].y;
+    }
+    rc = true;
+  }
+  return rc;
+}
+
+VECTORIZELIB_FUNCTION int potrace_path_SegmentTag(const potrace_path_t* pPath, int index)
 {
   int rc = 0;
   if (pPath && index >= 0 && index < pPath->curve.n)
@@ -285,7 +311,7 @@ VECTORIZELIB_FUNCTION int potrace_path_SegmentTag(potrace_path_t* pPath, int ind
   return rc;
 }
 
-VECTORIZELIB_FUNCTION bool potrace_path_SegmentCornerPoints(potrace_path_t* pPath, int index, int bufferSize, /*ARRAY*/double* pBuffer)
+VECTORIZELIB_FUNCTION bool potrace_path_SegmentCornerPoints(const potrace_path_t* pPath, int index, int bufferSize, /*ARRAY*/double* pBuffer)
 {
   bool rc = false;
   if (
@@ -313,7 +339,7 @@ VECTORIZELIB_FUNCTION bool potrace_path_SegmentCornerPoints(potrace_path_t* pPat
   return rc;
 }
 
-VECTORIZELIB_FUNCTION bool potrace_path_SegmentCurvePoints(potrace_path_t* pPath, int index, int bufferSize, /*ARRAY*/double* pBuffer)
+VECTORIZELIB_FUNCTION bool potrace_path_SegmentCurvePoints(const potrace_path_t* pPath, int index, int bufferSize, /*ARRAY*/double* pBuffer)
 {
   bool rc = false;
   if (

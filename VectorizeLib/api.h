@@ -24,7 +24,6 @@ VECTORIZELIB_FUNCTION void potrace_param_SetDefault(potrace_param_t* pParam);
 VECTORIZELIB_FUNCTION double potrace_param_GetSetDouble(potrace_param_t* pParam, int which, bool set, double setValue);
 VECTORIZELIB_FUNCTION int potrace_param_GetSetInt(potrace_param_t* pParam, int which, bool set, int setValue);
 
-
 /////////////////////////////////////////////////
 // potrace_bitmap_t helpers
 
@@ -44,17 +43,16 @@ VECTORIZELIB_FUNCTION void potrace_bitmap_PutPixel(potrace_bitmap_t* pBitmap, in
 /////////////////////////////////////////////////
 // potrace_state_t helpers
 
-VECTORIZELIB_FUNCTION potrace_state_t* potrace_state_Trace(potrace_bitmap_t* pBitmap, potrace_param_t* pParam);
+VECTORIZELIB_FUNCTION potrace_state_t* potrace_state_New(potrace_bitmap_t* pBitmap, potrace_param_t* pParam);
 VECTORIZELIB_FUNCTION void potrace_state_Delete(potrace_state_t* pState);
-VECTORIZELIB_FUNCTION potrace_path_t* potrace_state_PathList(potrace_state_t* pState);
+VECTORIZELIB_FUNCTION potrace_path_t* potrace_state_PathList(const potrace_state_t* pState);
 
 /////////////////////////////////////////////////
 // potrace_path_t helpers
 
-VECTORIZELIB_FUNCTION int potrace_path_Area(potrace_path_t* pPath);
-VECTORIZELIB_FUNCTION bool potrace_path_Sign(potrace_path_t* pPath);
-VECTORIZELIB_FUNCTION potrace_path_t* potrace_path_Next(potrace_path_t* pPath);
-VECTORIZELIB_FUNCTION int potrace_path_SegmentCount(potrace_path_t* pPath);
-VECTORIZELIB_FUNCTION int potrace_path_SegmentTag(potrace_path_t* pPath, int index);
-VECTORIZELIB_FUNCTION bool potrace_path_SegmentCornerPoints(potrace_path_t* pPath, int index, int bufferSize, /*ARRAY*/double* pBuffer);
-VECTORIZELIB_FUNCTION bool potrace_path_SegmentCurvePoints(potrace_path_t* pPath, int index, int bufferSize, /*ARRAY*/double* pBuffer);
+VECTORIZELIB_FUNCTION potrace_path_t* potrace_path_Next(const potrace_path_t* pPath);
+VECTORIZELIB_FUNCTION int potrace_path_SegmentCount(const potrace_path_t* pPath);
+VECTORIZELIB_FUNCTION bool potrace_path_SegmentPoints(const potrace_path_t* pPath, int bufferSize, /*ARRAY*/double* pBuffer);
+VECTORIZELIB_FUNCTION int potrace_path_SegmentTag(const potrace_path_t* pPath, int index);
+VECTORIZELIB_FUNCTION bool potrace_path_SegmentCornerPoints(const potrace_path_t* pPath, int index, int bufferSize, /*ARRAY*/double* pBuffer);
+VECTORIZELIB_FUNCTION bool potrace_path_SegmentCurvePoints(const potrace_path_t* pPath, int index, int bufferSize, /*ARRAY*/double* pBuffer);
