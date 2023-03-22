@@ -472,20 +472,39 @@ namespace VectorizeCommon
 
       using (var bitmapData = bitmap.Lock())
       {
-        Parallel.For(0, bitmap.Height, y =>
+        if (Rhino.Runtime.HostUtils.RunningOnWindows)
         {
-          for (var x = 0; x < bitmap.Width; x++)
+          Parallel.For(0, bitmap.Height, y =>
           {
-            var color = bitmapData.GetPixel(x, y);
-            var alpha = color.Ab;
-            var white = 3 * (255 - alpha);
-            var sample = color.Rb + color.Gb + color.Bb;
-            var brightness = sample * alpha / 256 + white;
-            var black = brightness >= floor && brightness < cutoff;
-            values[x + bitmap.Width * y] = black;
+            for (var x = 0; x < bitmap.Width; x++)
+            {
+              var color = bitmapData.GetPixel(x, y);
+              var alpha = color.Ab;
+              var white = 3 * (255 - alpha);
+              var sample = color.Rb + color.Gb + color.Bb;
+              var brightness = sample * alpha / 256 + white;
+              var black = brightness >= floor && brightness < cutoff;
+              values[x + bitmap.Width * y] = black;
+            }
+          }
+          );
+        }
+        else
+        {
+          for (var y  = 0; y < bitmap.Height; y++)
+          {
+            for (var x = 0; x < bitmap.Width; x++)
+            {
+              var color = bitmapData.GetPixel(x, y);
+              var alpha = color.Ab;
+              var white = 3 * (255 - alpha);
+              var sample = color.Rb + color.Gb + color.Bb;
+              var brightness = sample * alpha / 256 + white;
+              var black = brightness >= floor && brightness < cutoff;
+              values[x + bitmap.Width * y] = black;
+            }
           }
         }
-        );
       }
 
       // Rather than calling potrace_bitmap_New and then potrace_bitmap_PutPixel
