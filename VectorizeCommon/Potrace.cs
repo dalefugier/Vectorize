@@ -1,9 +1,7 @@
 ﻿using Rhino;
 using Rhino.Geometry;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
 
 namespace VectorizeCommon
 {
@@ -472,39 +470,16 @@ namespace VectorizeCommon
 
       using (var bitmapData = bitmap.Lock())
       {
-        if (Rhino.Runtime.HostUtils.RunningOnWindows)
+        var i = 0;
+        foreach (var argbData in bitmapData.GetPixels())
         {
-          Parallel.For(0, bitmap.Height, y =>
-          {
-            for (var x = 0; x < bitmap.Width; x++)
-            {
-              var color = bitmapData.GetPixel(x, y);
-              var alpha = color.Ab;
-              var white = 3 * (255 - alpha);
-              var sample = color.Rb + color.Gb + color.Bb;
-              var brightness = sample * alpha / 256 + white;
-              var black = brightness >= floor && brightness < cutoff;
-              values[x + bitmap.Width * y] = black;
-            }
-          }
-          );
-        }
-        else
-        {
-          for (var y  = 0; y < bitmap.Height; y++)
-          {
-            for (var x = 0; x < bitmap.Width; x++)
-            {
-              var color = bitmapData.GetPixel(x, y);
-              var alpha = color.Ab;
-              var white = 3 * (255 - alpha);
-              var sample = color.Rb + color.Gb + color.Bb;
-              var brightness = sample * alpha / 256 + white;
-              var black = brightness >= floor && brightness < cutoff;
-              values[x + bitmap.Width * y] = black;
-            }
-          }
-        }
+          var alpha = argbData.Ab;
+          var white = 3 * (255 - alpha);
+          var sample = argbData.Rb + argbData.Gb + argbData.Bb;
+          var brightness = sample * alpha / 256 + white;
+          var black = brightness >= floor && brightness < cutoff;
+          values[i++] = black;
+        };
       }
 
       // Rather than calling potrace_bitmap_New and then potrace_bitmap_PutPixel
