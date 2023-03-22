@@ -1,5 +1,7 @@
 #include "pch.h"
+#if defined(_WINDOWS)
 #include <omp.h>
+#endif
 #include "potracelib.h"
 #include "bitmap.h"
 #include "auxiliary.h"
@@ -129,7 +131,9 @@ VECTORIZELIB_FUNCTION potrace_bitmap_t* potrace_bitmap_New2(int width, int heigh
     rc = bm_new(width, height);
     if (rc)
     {
+#if defined(_WINDOWS)
       #pragma omp parallel for
+#endif
       for (int y = 0; y < height; y++)
       {
         for (int x = 0; x < width; x++)
