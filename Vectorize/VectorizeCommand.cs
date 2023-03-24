@@ -3,6 +3,7 @@ using Rhino.Commands;
 using Rhino.Input;
 using Rhino.Input.Custom;
 using Rhino.UI;
+using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -13,9 +14,11 @@ namespace Vectorize
   /// <summary>
   /// Vectorize command
   /// </summary>
-  public class VectorizeCommand : Command
+  public class VectorizeCommand : Rhino.Commands.Command
   {
-    // Constructor
+    /// <summary>
+    /// Constructor
+    /// </summary>
     public VectorizeCommand()
     {
       Instance = this;
@@ -32,6 +35,22 @@ namespace Vectorize
     public static string HelpUrl => "https://github.com/dalefugier/Vectorize/wiki";
 
     /// <summary>
+    /// Show the help url.
+    /// </summary>
+    public static void ShowHelpUrl()
+    {
+      var uri = new Uri(HelpUrl, UriKind.Absolute);
+      try
+      {
+        Process.Start(new ProcessStartInfo(uri.AbsoluteUri) { UseShellExecute = true });
+      }
+      catch (Exception ex)
+      {
+        RhinoApp.WriteLine(ex.Message);
+      }
+    }
+
+    /// <summary>
     /// Command.EnglishName override
     /// </summary>
     public override string EnglishName => "Vectorize";
@@ -41,7 +60,7 @@ namespace Vectorize
     /// </summary>
     protected override void OnHelp()
     {
-      Process.Start(HelpUrl);
+      ShowHelpUrl();
     }
 
     /// <summary>

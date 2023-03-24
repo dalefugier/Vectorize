@@ -3,7 +3,9 @@ using Eto.Forms;
 using Rhino;
 using Rhino.UI.Controls;
 using Rhino.UI.Forms;
+using System;
 using System.Diagnostics;
+using System.Security.Policy;
 using VectorizeCommon;
 
 namespace Vectorize
@@ -183,6 +185,9 @@ namespace Vectorize
       return layout;
     }
 
+    /// <summary>
+    /// Trace the bitmap and redraw the results.
+    /// </summary>
     private void UpdateAndRedraw()
     {
       if (m_allow_update_and_redraw && null != m_doc && null != m_conduit)
@@ -192,9 +197,12 @@ namespace Vectorize
       }
     }
 
+    /// <summary>
+    /// Show the help url.
+    /// </summary>
     private void ShowHelpUrl()
     {
-      Process.Start(VectorizeCommand.HelpUrl);
+      VectorizeCommand.ShowHelpUrl();
     }
   }
 }
