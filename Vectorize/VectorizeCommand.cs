@@ -3,6 +3,7 @@ using Rhino.Commands;
 using Rhino.Input;
 using Rhino.Input.Custom;
 using Rhino.UI;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using VectorizeCommon;
@@ -26,9 +27,22 @@ namespace Vectorize
     public static VectorizeCommand Instance { get; private set; }
 
     /// <summary>
+    /// Get the help url.
+    /// </summary>
+    public static string HelpUrl => "https://github.com/dalefugier/Vectorize/wiki";
+
+    /// <summary>
     /// Command.EnglishName override
     /// </summary>
     public override string EnglishName => "Vectorize";
+
+    /// <summary>
+    /// Command.OnHelp override
+    /// </summary>
+    protected override void OnHelp()
+    {
+      Process.Start(HelpUrl);
+    }
 
     /// <summary>
     /// Command.RunCommand override

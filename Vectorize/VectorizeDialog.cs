@@ -3,6 +3,7 @@ using Eto.Forms;
 using Rhino;
 using Rhino.UI.Controls;
 using Rhino.UI.Forms;
+using System.Diagnostics;
 using VectorizeCommon;
 
 namespace Vectorize
@@ -25,7 +26,9 @@ namespace Vectorize
       m_conduit = conduit;
 
       Resizable = false;
-      ShowHelpButton = false;
+      ShowHelpButton = true;
+      HelpButtonClick += (sender, e) => ShowHelpUrl();
+
       Title = VectorizeCommand.Instance.EnglishName;
       Content = CreateTableLayout();
       Shown += (sender, e) => UpdateAndRedraw();
@@ -187,6 +190,11 @@ namespace Vectorize
         m_conduit.TraceBitmap();
         m_doc.Views.Redraw();
       }
+    }
+
+    private void ShowHelpUrl()
+    {
+      Process.Start(VectorizeCommand.HelpUrl);
     }
   }
 }
