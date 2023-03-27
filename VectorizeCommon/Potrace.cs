@@ -1,6 +1,7 @@
 ﻿using Rhino;
 using Rhino.Geometry;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace VectorizeCommon
@@ -658,7 +659,7 @@ namespace VectorizeCommon
     {
       get
       {
-        var count = UnsafeNativeMethods.potrace_path_SegmentCount(m_ptr); ;
+        var count = SegmentCount;
         if (0 == count)
           return null;
 
@@ -695,7 +696,99 @@ namespace VectorizeCommon
       }
     }
 
+    /// <summary>
+    /// The approximate magnitude of the area enclosed by the curve.
+    /// </summary>
+    public int Area
+    {
+      get => UnsafeNativeMethods.potrace_path_Area(m_ptr);
+    }
+
+    /// <summary>
+    /// True ('+') or false ('-') depending on orientation.
+    /// </summary>
+    public bool Sign
+    {
+      get => UnsafeNativeMethods.potrace_path_Sign(m_ptr);
+    }
+
+    /// <summary>
+    /// Get the number of curve segments.
+    /// </summary>
+    private int SegmentCount => UnsafeNativeMethods.potrace_path_SegmentCount(m_ptr);
+
+    /// <summary>
+    /// Potrace curve segment type
+    /// </summary>
+    private enum SegmentType
+    {
+      /// <summary>
+      /// None
+      /// </summary>
+      None = 0,
+      /// <summary>
+      /// POTRACE_CURVETO, or Bezier
+      /// </summary>
+      Curve = 1,
+      /// <summary>
+      /// POTRACE_CORNER, or Polyline
+      /// </summary>
+      Corner = 2,
+    }
+
+    /// <summary>
+    /// Returns the type of curve segment.
+    /// </summary>
+    /// <param name="index">The segment index.</param>
+    /// <returns>The tag.</returns>
+    private SegmentType SegmentTag(int index)
+    {
+      return (SegmentType)UnsafeNativeMethods.potrace_path_SegmentTag(m_ptr, index);
+    }
+
     #endregion // Properties
+
+    #region Methods
+
+    /// <summary>
+    /// Get the 3 points for a POTRACE_CORNER.
+    /// </summary>
+    /// <param name="index">The segment index.</param>
+    /// <returns>The points.</returns>
+    private Point3d[] SegmentCornerPoints(int index)
+    {
+      var vertices = new double[6]; // 3- 2d points
+      var rc = UnsafeNativeMethods.potrace_path_SegmentCornerPoints(m_ptr, index, vertices.Length, vertices);
+      if (rc)
+      {
+        var points = new List<Point3d>(3);
+        for (var vi = 0; vi < vertices.Length; vi += 2)
+          points.Add(new Point3d(vertices[vi], vertices[vi + 1], 0.0));
+        return points.ToArray();
+      }
+      return new Point3d[0];
+    }
+
+    /// <summary>
+    /// Get the 4 points for a POTRACE_CURVETO.
+    /// </summary>
+    /// <param name="index"></param>
+    /// <returns>The points.</returns>
+    private Point3d[] SegmentCurvePoints(int index)
+    {
+      var vertices = new double[8]; // 4- 2d points
+      var rc = UnsafeNativeMethods.potrace_path_SegmentCurvePoints(m_ptr, index, vertices.Length, vertices);
+      if (rc)
+      {
+        var points = new List<Point3d>(3);
+        for (var vi = 0; vi < vertices.Length; vi += 2)
+          points.Add(new Point3d(vertices[vi], vertices[vi + 1], 0.0));
+        return points.ToArray();
+      }
+      return new Point3d[0];
+    }
+
+    #endregion // Methods
   }
 
   /// <summary>

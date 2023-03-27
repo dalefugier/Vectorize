@@ -56,3 +56,5 @@ VECTORIZELIB_FUNCTION bool potrace_path_SegmentPoints(const potrace_path_t* pPat
 VECTORIZELIB_FUNCTION int potrace_path_SegmentTag(const potrace_path_t* pPath, int index);
 VECTORIZELIB_FUNCTION bool potrace_path_SegmentCornerPoints(const potrace_path_t* pPath, int index, int bufferSize, /*ARRAY*/double* pBuffer);
 VECTORIZELIB_FUNCTION bool potrace_path_SegmentCurvePoints(const potrace_path_t* pPath, int index, int bufferSize, /*ARRAY*/double* pBuffer);
+VECTORIZELIB_FUNCTION int potrace_path_Area(potrace_path_t* pPath);
+VECTORIZELIB_FUNCTION bool potrace_path_Sign(potrace_path_t* pPath);

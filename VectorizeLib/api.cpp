@@ -365,3 +365,19 @@ VECTORIZELIB_FUNCTION bool potrace_path_SegmentCurvePoints(const potrace_path_t*
   }
   return rc;
 }
+
+VECTORIZELIB_FUNCTION int potrace_path_Area(potrace_path_t* pPath)
+{
+  int rc = 0;
+  if (pPath)
+    rc = pPath->area;
+  return rc;
+}
+
+VECTORIZELIB_FUNCTION bool potrace_path_Sign(potrace_path_t* pPath)
+{
+  bool rc = true;
+  if (pPath)
+    rc = (pPath->sign == '+') ? true : false;
+  return rc;
+}

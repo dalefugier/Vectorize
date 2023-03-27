@@ -106,6 +106,13 @@ namespace VectorizeCommon
     [return: MarshalAs(UnmanagedType.U1)]
     internal static extern bool potrace_path_SegmentCurvePoints(IntPtr pPath, int index, int bufferSize, double[] buffer);
 
+    [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern int potrace_path_Area(IntPtr pPath);
+
+    [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+    [return: MarshalAs(UnmanagedType.U1)]
+    internal static extern bool potrace_path_Sign(IntPtr pPath);
+
     #endregion // potrace_path_t helpers
   }
 }
