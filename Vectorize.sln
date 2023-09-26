@@ -1,15 +1,15 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33403.182
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VectorizeCommon", "VectorizeCommon\VectorizeCommon.csproj", "{022C39F5-68D8-458E-8AB7-FC805BE6D567}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VectorizeCommon", "VectorizeCommon\VectorizeCommon.csproj", "{022C39F5-68D8-458E-8AB7-FC805BE6D567}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vectorize", "Vectorize\Vectorize.csproj", "{4C63F2BE-7C08-4C8B-8186-A24D29C69BCD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vectorize", "Vectorize\Vectorize.csproj", "{4C63F2BE-7C08-4C8B-8186-A24D29C69BCD}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VectorizeLib", "VectorizeLib\VectorizeLib.vcxproj", "{FD775769-8622-41BA-95CE-7F24BCC0ED45}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VectorizeGh", "VectorizeGh\VectorizeGh.csproj", "{8E0714A8-6570-4002-A7FC-7EC006D8C240}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VectorizeGh", "VectorizeGh\VectorizeGh.csproj", "{8E0714A8-6570-4002-A7FC-7EC006D8C240}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

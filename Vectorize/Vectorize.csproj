@@ -1,83 +1,28 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{4C63F2BE-7C08-4C8B-8186-A24D29C69BCD}</ProjectGuid>
+    <TargetFrameworks>net48</TargetFrameworks>
+    <TargetExt>.rhp</TargetExt>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Vectorize</RootNamespace>
-    <AssemblyName>Vectorize</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-    <TargetFrameworkProfile />
+    <Title>Vectorize</Title>
+    <Company>Robert McNeel &amp; Associates</Company>
+    <Copyright>Copyright © 2020-2023, Robert McNeel &amp; Associates</Copyright>
+    <Product>Vectorize</Product>
+    <Description>Vectorize plug-in for Rhinoceros®</Description>
+    <Version>8.0.23264.9003</Version>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
     <OutputPath>..\Bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <OutputPath>..\Bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="Microsoft.CSharp" />
+    <EmbeddedResource Include="Resources\**\*" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="VectorizeCommand.cs" />
-    <Compile Include="VectorizeConduit.cs" />
-    <Compile Include="VectorizePlugIn.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="VectorizeDialog.cs" />
+    <ProjectReference Include="..\VectorizeCommon\VectorizeCommon.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Vectorize.ico" />
+    <PackageReference Include="RhinoCommon"><Version>8.0.23264.9003-beta</Version></PackageReference>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\VectorizeCommon\VectorizeCommon.csproj">
-      <Project>{022c39f5-68d8-458e-8ab7-fc805be6d567}</Project>
-      <Name>VectorizeCommon</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="RhinoCommon">
-      <Version>8.0.23059.12305-wip</Version>
-    </PackageReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
-  <PropertyGroup>
-    <PostBuildEvent>Copy "$(TargetPath)" "$(TargetDir)$(ProjectName).rhp"
-Erase "$(TargetPath)"</PostBuildEvent>
-  </PropertyGroup>
-  <PropertyGroup>
-    <FallbackCulture>en-US</FallbackCulture>
-  </PropertyGroup>
-</Project>
+ </Project>
