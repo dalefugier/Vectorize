@@ -1,4 +1,5 @@
 ﻿using Rhino.PlugIns;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 [assembly: PlugInDescription(DescriptionType.Address, "146 North Canal Street, Suite 320\r\nSeattle, WA 98103")]
@@ -10,5 +11,8 @@ using System.Runtime.InteropServices;
 [assembly: PlugInDescription(DescriptionType.UpdateUrl, "https://www.food4rhino.com/en/app/vectorize")]
 [assembly: PlugInDescription(DescriptionType.WebSite, "https://www.food4rhino.com/en/app/vectorize")]
 [assembly: PlugInDescription(DescriptionType.Icon, "Vectorize.Resources.Vectorize.ico")]
+
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
 [assembly: Guid("4c63f2be-7c08-4c8b-8186-a24d29c69bcd")]

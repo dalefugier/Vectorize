@@ -32,6 +32,6 @@ namespace VectorizeGh
     public override string AuthorName => "Robert McNeel & Associates";
 
     // Return a string representing your preferred contact details.
-    public override string AuthorContact => "tech@mcneel.com";
+    public override string AuthorContact => "dale@mcneel.com";
   }
 }
