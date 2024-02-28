@@ -1,19 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+	
   <PropertyGroup>
-    <TargetFramework>net48</TargetFramework>
+    <TargetFrameworks>net48</TargetFrameworks>
     <TargetExt>.gha</TargetExt>
+    <Version>1.0</Version>
     <OutputType>Library</OutputType>
     <Title>VectorizeGh</Title>
     <Company>Robert McNeel &amp; Associates</Company>
-    <Copyright>Copyright © 2020-2023, Robert McNeel &amp; Associates</Copyright>
-    <Product>VectorizeGh</Product>
-    <Description>Vectorize plug-in for Grasshopper</Description>
-    <Version>8.0.23264.9003</Version>
+    <Copyright>Copyright © 2020-2024, Robert McNeel &amp; Associates</Copyright>
+    <Product>Vectorize</Product>
+    <Description>Vectorize plug-in for Rhinoceros®</Description>
+    <Version>8.4.24044.15001</Version>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <OutputPath>..\Bin\Debug\</OutputPath>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <OutputPath>..\Bin\Release\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
@@ -23,6 +25,6 @@
     <ProjectReference Include="..\VectorizeCommon\VectorizeCommon.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Grasshopper" Version="8.0.23264.9003-beta" />
+    <PackageReference Include="Grasshopper" Version="8.4.24044.15001" IncludeAssets="compile;build" />
   </ItemGroup>
 </Project>

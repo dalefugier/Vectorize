@@ -46,6 +46,16 @@ namespace Vectorize
       get => m_curves;
     }
 
+    public void ClearCurves()
+    {
+      if (null != m_curves && m_curves.Count > 0)
+      {
+        foreach (var curve in m_curves)
+          curve.Dispose();
+        m_curves.Clear();
+      }
+    }
+
     /// <summary>
     /// DisplayConduit.CalculateBoundingBox override.
     /// </summary>
@@ -82,7 +92,7 @@ namespace Vectorize
     public void TraceBitmap()
     {
       // Clear curve list and reset conduit bounding box
-      m_curves.Clear();
+      ClearCurves();
       m_bbox = BoundingBox.Unset;
 
       // Create Potrace bitmap if needed

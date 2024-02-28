@@ -1,11 +1,9 @@
 ﻿using Eto.Drawing;
 using Eto.Forms;
 using Rhino;
+using Rhino.UI;
 using Rhino.UI.Controls;
 using Rhino.UI.Forms;
-using System;
-using System.Diagnostics;
-using System.Security.Policy;
 using VectorizeCommon;
 
 namespace Vectorize
@@ -17,7 +15,7 @@ namespace Vectorize
   {
     private readonly RhinoDoc m_doc;
     private readonly VectorizeConduit m_conduit;
-    private bool m_allow_update_and_redraw = true;
+    private bool m_update_and_redraw = true;
 
     /// <summary>
     /// Public constructor
@@ -33,6 +31,7 @@ namespace Vectorize
 
       Title = VectorizeCommand.Instance.EnglishName;
       Content = CreateTableLayout();
+      m_update_and_redraw = false;
       Shown += (sender, e) => UpdateAndRedraw();
     }
 
@@ -41,7 +40,6 @@ namespace Vectorize
     /// </summary>
     private RhinoDialogTableLayout CreateTableLayout()
     {
-      // Create controls and define behaviors
       var parameters = m_conduit.Parameters;
 
       // Threshold (0.0, 100.0)
@@ -50,18 +48,16 @@ namespace Vectorize
         Decimals = 2,
         DrawTextLabels = true,
         ToolTip = PotraceStrings.ThresholdTooltip(false),
+        Value1 = parameters.ThresholdUi,
         Width = 200
       };
       sldThreshold.SetMinMax(0.0, 100.0);
-      sldThreshold.Value1 = parameters.Threshold * 100.0;
-      sldThreshold.PropertyChanged += (sender, args) =>
+      sldThreshold.MouseUp += (sender, args) =>
       {
-        if (m_allow_update_and_redraw)
+        var value = sldThreshold.Value1.Value;
+        if (parameters.ThresholdUi != value)
         {
-          m_allow_update_and_redraw = false;
-          parameters.Threshold = sldThreshold.Value1.Value / 100.0;
-          sldThreshold.Value1 = parameters.Threshold * 100.0;
-          m_allow_update_and_redraw = true;
+          parameters.ThresholdUi = value;
           UpdateAndRedraw();
         }
       };
@@ -71,18 +67,16 @@ namespace Vectorize
       {
         Decimals = 0,
         DrawTextLabels = true,
-        ToolTip = PotraceStrings.TurdSizeTooltip(false)
+        ToolTip = PotraceStrings.TurdSizeTooltip(false),
+        Value1 = parameters.TurdSize
       };
       sldTurdSize.SetMinMax(0.0, 100.0);
-      sldTurdSize.Value1 = parameters.TurdSize;
-      sldTurdSize.PropertyChanged += (sender, args) =>
+      sldTurdSize.MouseUp += (sender, args) =>
       {
-        if (m_allow_update_and_redraw)
+        var value = (int)sldTurdSize.Value1.Value;
+        if (parameters.TurdSize != value)
         {
-          m_allow_update_and_redraw = false;
-          parameters.TurdSize = (int)sldTurdSize.Value1.Value;
-          sldTurdSize.Value1 = parameters.TurdSize;
-          m_allow_update_and_redraw = true;
+          parameters.TurdSize = value;
           UpdateAndRedraw();
         }
       };
@@ -92,18 +86,16 @@ namespace Vectorize
       {
         Decimals = 2,
         DrawTextLabels = true,
-        ToolTip = PotraceStrings.AlphaMaxTooltip(false)
+        ToolTip = PotraceStrings.AlphaMaxTooltip(false),
+        Value1 = parameters.AlphaMax
       };
       sldAlphaMax.SetMinMax(0.0, 1.34);
-      sldAlphaMax.Value1 = parameters.AlphaMax;
-      sldAlphaMax.PropertyChanged += (sender, args) =>
+      sldAlphaMax.MouseUp += (sender, args) =>
       {
-        if (m_allow_update_and_redraw)
+        var value = sldAlphaMax.Value1.Value;
+        if (parameters.AlphaMax != value)
         {
-          m_allow_update_and_redraw = false;
-          parameters.AlphaMax = sldAlphaMax.Value1.Value;
-          sldAlphaMax.Value1 = parameters.AlphaMax;
-          m_allow_update_and_redraw = true;
+          parameters.AlphaMax = value;
           UpdateAndRedraw();
         }
       };
@@ -113,18 +105,16 @@ namespace Vectorize
       {
         Decimals = 2,
         DrawTextLabels = true,
-        ToolTip = PotraceStrings.OptimizeToleranceTooltip(false)
+        ToolTip = PotraceStrings.OptimizeToleranceTooltip(false),
+        Value1 = parameters.OptimizeTolerance
       };
       sldOptimizeTolerance.SetMinMax(0.0, 1.0);
-      sldOptimizeTolerance.Value1 = parameters.OptimizeTolerance;
-      sldOptimizeTolerance.PropertyChanged += (sender, args) =>
+      sldOptimizeTolerance.MouseUp += (sender, args) =>
       {
-        if (m_allow_update_and_redraw)
+        var value = sldOptimizeTolerance.Value1.Value;
+        if (parameters.OptimizeTolerance != value)
         {
-          m_allow_update_and_redraw = false;
-          parameters.OptimizeTolerance = sldOptimizeTolerance.Value1.Value;
-          sldOptimizeTolerance.Value1 = parameters.OptimizeTolerance;
-          m_allow_update_and_redraw = true;
+          parameters.OptimizeTolerance = value;
           UpdateAndRedraw();
         }
       };
@@ -138,11 +128,10 @@ namespace Vectorize
       };
       chkIncludeBorder.CheckedChanged += (sender, args) =>
       {
-        if (m_allow_update_and_redraw)
+        var value = chkIncludeBorder.Checked.Value;
+        if (parameters.IncludeBorder != value)
         {
-          m_allow_update_and_redraw = false;
-          parameters.IncludeBorder = chkIncludeBorder.Checked.Value;
-          m_allow_update_and_redraw = true;
+          parameters.IncludeBorder = value;
           UpdateAndRedraw();
         }
       };
@@ -151,18 +140,15 @@ namespace Vectorize
       var btnRestoreDefaults = new Button { Text = "Restore Defaults" };
       btnRestoreDefaults.Click += (sender, args) =>
       {
-        if (m_allow_update_and_redraw)
-        {
-          m_allow_update_and_redraw = false;
-          parameters.SetDefaults();
-          sldThreshold.Value1 = parameters.Threshold * 100.0;
-          sldTurdSize.Value1 = parameters.TurdSize;
-          sldAlphaMax.Value1 = parameters.AlphaMax;
-          sldOptimizeTolerance.Value1 = parameters.OptimizeTolerance;
-          chkIncludeBorder.Checked = parameters.IncludeBorder;
-          m_allow_update_and_redraw = true;
-          UpdateAndRedraw();
-        }
+        m_update_and_redraw = true;
+        parameters.SetDefaults();
+        sldThreshold.Value1 = parameters.ThresholdUi;
+        sldTurdSize.Value1 = parameters.TurdSize;
+        sldAlphaMax.Value1 = parameters.AlphaMax;
+        sldOptimizeTolerance.Value1 = parameters.OptimizeTolerance;
+        chkIncludeBorder.Checked = parameters.IncludeBorder;
+        m_update_and_redraw = false;
+        UpdateAndRedraw();
       };
 
       // Layout the controls
@@ -190,11 +176,16 @@ namespace Vectorize
     /// </summary>
     private void UpdateAndRedraw()
     {
-      if (m_allow_update_and_redraw && null != m_doc && null != m_conduit)
+      if (m_update_and_redraw || null == m_doc || null == m_conduit)
+        return;
+
+      m_update_and_redraw = true;
+      using (var cursor = new WaitCursor())
       {
         m_conduit.TraceBitmap();
         m_doc.Views.Redraw();
       }
+      m_update_and_redraw = false;
     }
 
     /// <summary>
