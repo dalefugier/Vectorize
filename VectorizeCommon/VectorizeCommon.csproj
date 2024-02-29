@@ -4,10 +4,10 @@
     <OutputType>Library</OutputType>
     <Title>VectorizeCommon</Title>
     <Company>Robert McNeel &amp; Associates</Company>
-    <Copyright>Copyright © 2020-2023, Robert McNeel &amp; Associates</Copyright>
+    <Copyright>Copyright © 2020-2024, Robert McNeel &amp; Associates</Copyright>
     <Product>VectorizeCommon</Product>
     <Description>VectorizeCommon assembly for Rhinoceros®</Description>
-    <Version>8.0.23264.9003</Version>
+    <Version>8.4.24044.15001</Version>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <OutputPath>..\Bin\Debug\</OutputPath>
@@ -16,6 +16,6 @@
     <OutputPath>..\Bin\Release\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="RhinoCommon"><Version>8.0.23264.9003-beta</Version></PackageReference>
+    <PackageReference Include="RhinoCommon" Version="8.4.24044.15001" IncludeAssets="compile;build" />
   </ItemGroup>
 </Project>

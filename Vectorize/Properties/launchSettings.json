@@ -2,7 +2,7 @@
   "profiles": {
     "Vectorize": {
       "commandName": "Executable",
-      "executablePath": "C:\\dev\\github\\mcneel\\rhino-8\\src4\\bin\\Debug\\Rhino.exe",
+      "executablePath": "C:\\Program Files\\Rhino 8\\System\\Rhino.exe",
       "commandLineArgs": "/netfx"
     }
   }

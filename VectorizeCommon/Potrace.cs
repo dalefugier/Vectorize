@@ -1,6 +1,7 @@
 ﻿using Rhino;
 using Rhino.Geometry;
 using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 
@@ -245,6 +246,16 @@ namespace VectorizeCommon
       set => m_threshold = RhinoMath.Clamp(value, 0.0, 1.0);
     }
     private double m_threshold = 0.45;
+
+    /// <summary>
+    /// Bitmap thresholding parameter, used to weight colors to either black or white.
+    /// The default value is 45. The range is from 0 to 100.
+    /// </summary>
+    public double ThresholdUi
+    {
+      get => Threshold * 100.0;
+      set => Threshold = value / 100.0;
+    }
 
     /// <summary>
     /// Inverts the bitmap.
@@ -648,7 +659,9 @@ namespace VectorizeCommon
       get
       {
         var ptr = UnsafeNativeMethods.potrace_path_Next(m_ptr);
-        return (IntPtr.Zero != ptr) ? new PotracePath(ptr) : null;
+        var rc = (IntPtr.Zero != ptr) ? new PotracePath(ptr) : null;
+        GC.KeepAlive(this);
+        return rc;
       }
     }
 
@@ -659,40 +672,44 @@ namespace VectorizeCommon
     {
       get
       {
+        Curve rc = null;
         var count = SegmentCount;
-        if (0 == count)
-          return null;
-
-        var values = new double[count * POINT_STRIDE * CURVE_STRIDE];
-        if (!UnsafeNativeMethods.potrace_path_SegmentPoints(m_ptr, values.Length, values))
-          return null;
-
-        var polyCurve = new PolyCurve();
-
-        var i = 0;
-        for (var c = 0; c < count; c++)
+        if (count > 0)
         {
-          var points = new Point3d[CURVE_STRIDE];
-          for (var p = 0; p < CURVE_STRIDE; p++)
-            points[p] = new Point3d(values[i++], values[i++], 0.0);
+          var size = count * POINT_STRIDE * CURVE_STRIDE;
+          var values = new double[size];
+          if (UnsafeNativeMethods.potrace_path_SegmentPoints(m_ptr, values.Length, values))
+          {
+            var polyCurve = new PolyCurve();
 
-          if (points[1].IsValid)
-          {
-            var bezier = new Rhino.Geometry.BezierCurve(points);
-            polyCurve.AppendSegment(bezier.ToNurbsCurve());
-          }
-          else
-          {
-            var polyline = new PolylineCurve(new Point3d[] { points[0], points[2], points[3] });
-            polyCurve.AppendSegment(polyline);
+            var i = 0;
+            for (var c = 0; c < count; c++)
+            {
+              var points = new Point3d[CURVE_STRIDE];
+              for (var p = 0; p < CURVE_STRIDE; p++)
+                points[p] = new Point3d(values[i++], values[i++], 0.0);
+
+              if (points[1].IsValid)
+              {
+                var bezier = new Rhino.Geometry.BezierCurve(points);
+                polyCurve.AppendSegment(bezier.ToNurbsCurve());
+              }
+              else
+              {
+                var polyline = new PolylineCurve(new Point3d[] { points[0], points[2], points[3] });
+                polyCurve.AppendSegment(polyline);
+              }
+            }
+
+            if (polyCurve.IsValid)
+            {
+              var curve = polyCurve.CleanUp();
+              rc = curve ?? polyCurve;
+            }
           }
         }
-
-        if (!polyCurve.IsValid) 
-          return null;
-
-        var curve = polyCurve.CleanUp();
-        return curve ?? polyCurve;
+        GC.KeepAlive(this);
+        return rc;
       }
     }
 
@@ -701,7 +718,12 @@ namespace VectorizeCommon
     /// </summary>
     public int Area
     {
-      get => UnsafeNativeMethods.potrace_path_Area(m_ptr);
+      get
+      {
+        var rc = UnsafeNativeMethods.potrace_path_Area(m_ptr);
+        GC.KeepAlive(this);
+        return rc;
+      }
     }
 
     /// <summary>
@@ -709,13 +731,26 @@ namespace VectorizeCommon
     /// </summary>
     public bool Sign
     {
-      get => UnsafeNativeMethods.potrace_path_Sign(m_ptr);
+      get
+      {
+        var rc = UnsafeNativeMethods.potrace_path_Sign(m_ptr);
+        GC.KeepAlive(this);
+        return rc;
+      }
     }
 
     /// <summary>
     /// Get the number of curve segments.
     /// </summary>
-    private int SegmentCount => UnsafeNativeMethods.potrace_path_SegmentCount(m_ptr);
+    private int SegmentCount
+    {
+      get
+      {
+        var rc = UnsafeNativeMethods.potrace_path_SegmentCount(m_ptr);
+        GC.KeepAlive(this);
+        return rc;
+      }
+    }
 
     /// <summary>
     /// Potrace curve segment type
@@ -743,7 +778,9 @@ namespace VectorizeCommon
     /// <returns>The tag.</returns>
     private SegmentType SegmentTag(int index)
     {
-      return (SegmentType)UnsafeNativeMethods.potrace_path_SegmentTag(m_ptr, index);
+      var rc = (SegmentType)UnsafeNativeMethods.potrace_path_SegmentTag(m_ptr, index);
+      GC.KeepAlive(this);
+      return rc;
     }
 
     #endregion // Properties
@@ -757,16 +794,17 @@ namespace VectorizeCommon
     /// <returns>The points.</returns>
     private Point3d[] SegmentCornerPoints(int index)
     {
+      var rc = new Point3d[0];
       var vertices = new double[6]; // 3- 2d points
-      var rc = UnsafeNativeMethods.potrace_path_SegmentCornerPoints(m_ptr, index, vertices.Length, vertices);
-      if (rc)
+      if (UnsafeNativeMethods.potrace_path_SegmentCornerPoints(m_ptr, index, vertices.Length, vertices))
       {
         var points = new List<Point3d>(3);
         for (var vi = 0; vi < vertices.Length; vi += 2)
           points.Add(new Point3d(vertices[vi], vertices[vi + 1], 0.0));
-        return points.ToArray();
+        rc = points.ToArray();
       }
-      return new Point3d[0];
+      GC.KeepAlive(this);
+      return rc;
     }
 
     /// <summary>
@@ -776,16 +814,17 @@ namespace VectorizeCommon
     /// <returns>The points.</returns>
     private Point3d[] SegmentCurvePoints(int index)
     {
+      var rc = new Point3d[0];
       var vertices = new double[8]; // 4- 2d points
-      var rc = UnsafeNativeMethods.potrace_path_SegmentCurvePoints(m_ptr, index, vertices.Length, vertices);
-      if (rc)
+      if (UnsafeNativeMethods.potrace_path_SegmentCurvePoints(m_ptr, index, vertices.Length, vertices))
       {
         var points = new List<Point3d>(3);
         for (var vi = 0; vi < vertices.Length; vi += 2)
           points.Add(new Point3d(vertices[vi], vertices[vi + 1], 0.0));
-        return points.ToArray();
+        rc = points.ToArray();
       }
-      return new Point3d[0];
+      GC.KeepAlive(this);
+      return rc;
     }
 
     #endregion // Methods
@@ -866,6 +905,7 @@ namespace VectorizeCommon
       get
       {
         var ptr = UnsafeNativeMethods.potrace_state_PathList(m_ptr);
+        GC.KeepAlive(this);
         return (IntPtr.Zero != ptr) ? new PotracePath(ptr) : null;
       }
     }
@@ -936,6 +976,9 @@ namespace VectorizeCommon
       return str;
     }
 
+    public static string TurnPolicyLabel => "Turn policy";
+    public static string TurnPolicyTooltip => "Algorithm used to resolve ambiguities in path decomposition.";
+
     public static string TurdSizeLabel(bool verbose)
     {
       return verbose ? "Speckles" : "Speckles";
@@ -962,14 +1005,18 @@ namespace VectorizeCommon
       return str;
     }
 
+    public static string OptimizeCurveTooltip => "Optimize Bézier segments.";
+    public static string OptimizeCurveLabel => "Optimize";
+
+
     public static string OptimizeToleranceLabel(bool verbose)
     {
-      return verbose ? "Optimize tolerance" : "Optimize";
+      return verbose ? "Optimize tolerance" : "Tolerance";
     }
 
     public static string OptimizeToleranceTooltip(bool verbose)
     {
-      var str = "Optimize paths by replacing sequences of Bézier segments with single segments.";
+      var str = "Bézier segment optimization tolerance.";
       if (verbose)
         str += " Range is from 0.0 to 1.0.";
       return str;

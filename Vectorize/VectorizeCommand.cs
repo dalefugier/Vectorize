@@ -170,6 +170,7 @@ namespace Vectorize
       {
         // Show the interactive dialog box
         var dialog = new VectorizeDialog(doc, conduit);
+        //var dialog = new VectorizeDialogOld(doc, conduit);
         dialog.RestorePosition();
         var result = dialog.ShowSemiModal(doc, RhinoEtoApp.MainWindow);
         dialog.SavePosition();
@@ -188,8 +189,11 @@ namespace Vectorize
         go.AcceptNothing(true);
         while (true)
         {
-          conduit.TraceBitmap();
-          doc.Views.Redraw();
+          using (var cursor = new WaitCursor())
+          {
+            conduit.TraceBitmap();
+            doc.Views.Redraw();
+          }
 
           go.ClearCommandOptions();
 
