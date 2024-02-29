@@ -1016,7 +1016,7 @@ namespace VectorizeCommon
 
     public static string OptimizeToleranceTooltip(bool verbose)
     {
-      var str = "Optimize paths by replacing sequences of Bézier segments with single segments.";
+      var str = "Bézier segment optimization tolerance.";
       if (verbose)
         str += " Range is from 0.0 to 1.0.";
       return str;

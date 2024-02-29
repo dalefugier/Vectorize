@@ -1,5 +1,6 @@
 ﻿using Rhino.Display;
 using Rhino.Geometry;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using VectorizeCommon;
@@ -54,6 +55,7 @@ namespace Vectorize
           curve.Dispose();
         m_curves.Clear();
       }
+      GC.KeepAlive(this);
     }
 
     /// <summary>
@@ -63,6 +65,7 @@ namespace Vectorize
     {
       if (m_bbox.IsValid)
         e.IncludeBoundingBox(m_bbox);
+      GC.KeepAlive(this);
     }
 
     /// <summary>
@@ -71,6 +74,7 @@ namespace Vectorize
     protected override void CalculateBoundingBoxZoomExtents(CalculateBoundingBoxEventArgs e)
     {
       CalculateBoundingBox(e);
+      GC.KeepAlive(this);
     }
 
     /// <summary>
@@ -84,6 +88,7 @@ namespace Vectorize
           continue;
         e.Display.DrawCurve(m_curves[i], m_color);
       }
+      GC.KeepAlive(this);
     }
 
     /// <summary>
@@ -109,42 +114,47 @@ namespace Vectorize
 
       // Trace the bitmap
       var potrace = Potrace.Trace(m_potraceBitmap, m_parameters);
-      if (null == potrace)
-        return;
-
-      // The first curve is always the border curve no matter what
-      var corners = new Point3d[] {
-        Point3d.Origin,
-        new Point3d(m_etoBitmap.Width, 0.0, 0.0),
-        new Point3d(m_etoBitmap.Width, m_etoBitmap.Height, 0.0),
-        new Point3d(0.0, m_etoBitmap.Height, 0.0),
-        Point3d.Origin
-        };
-
-      var border = new PolylineCurve(corners);
-      m_curves.Add(border);
-
-      // Harvest the Potrace path curves
-      var potracePath = potrace.Path;
-      while (null != potracePath)
+      if (null != potrace)
       {
-        var curve = potracePath.Curve;
-        if (null != curve)
-          m_curves.Add(curve);
-        potracePath = potracePath.Next;
-      }
 
-      if (m_curves.Count > 0)
-      {
-        // Scale the output, per the calculation made in the command.
-        if (m_scaleX != 1.0 || m_scaleY != 1.0)
+        // The first curve is always the border curve no matter what
+        var corners = new Point3d[] {
+          Point3d.Origin,
+          new Point3d(m_etoBitmap.Width, 0.0, 0.0),
+          new Point3d(m_etoBitmap.Width, m_etoBitmap.Height, 0.0),
+          new Point3d(0.0, m_etoBitmap.Height, 0.0),
+          Point3d.Origin
+          };
+
+        var border = new PolylineCurve(corners);
+        m_curves.Add(border);
+
+        // Harvest the Potrace path curves
+        var potracePath = potrace.Path;
+        while (null != potracePath)
         {
-          var xform = Transform.Scale(Plane.WorldXY, m_scaleX, m_scaleY, 1.0);
-          for (var i = 0; i < m_curves.Count; i++)
-            m_curves[i].Transform(xform);
+          var curve = potracePath.Curve;
+          if (null != curve)
+            m_curves.Add(curve);
+          potracePath = potracePath.Next;
         }
-        m_bbox = m_curves[0].GetBoundingBox(true);
+
+        if (m_curves.Count > 0)
+        {
+          // Scale the output, per the calculation made in the command.
+          if (m_scaleX != 1.0 || m_scaleY != 1.0)
+          {
+            var xform = Transform.Scale(Plane.WorldXY, m_scaleX, m_scaleY, 1.0);
+            for (var i = 0; i < m_curves.Count; i++)
+              m_curves[i].Transform(xform);
+          }
+          m_bbox = m_curves[0].GetBoundingBox(true);
+        }
+
+        potrace.Dispose();
       }
+
+      GC.KeepAlive(this);
     }
   }
 }

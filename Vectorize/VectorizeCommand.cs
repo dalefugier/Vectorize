@@ -189,8 +189,11 @@ namespace Vectorize
         go.AcceptNothing(true);
         while (true)
         {
-          conduit.TraceBitmap();
-          doc.Views.Redraw();
+          using (var cursor = new WaitCursor())
+          {
+            conduit.TraceBitmap();
+            doc.Views.Redraw();
+          }
 
           go.ClearCommandOptions();
 
