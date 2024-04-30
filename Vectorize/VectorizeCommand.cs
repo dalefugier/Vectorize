@@ -73,7 +73,7 @@ namespace Vectorize
       if (string.IsNullOrEmpty(path))
         return Result.Cancel;
 
-      // Try readng image file
+      // Try reading image file
       System.Drawing.Bitmap systemBitmap;
       try
       {
@@ -133,6 +133,8 @@ namespace Vectorize
         }
       }
 
+      RhinoApp.SetCommandPrompt("Processing image, please wait");
+
       // Convert the bitmap to an Eto bitmap
       var etoBitmap = BitmapHelpers.ConvertBitmapToEto(systemBitmap);
       if (null == etoBitmap)
@@ -157,7 +159,6 @@ namespace Vectorize
 
       // This bitmap is not needed anymore, so dispose of it
       systemBitmap.Dispose();
-      systemBitmap = null;
 
       // Get persistent settings
       var parameters = new PotraceParameters();
@@ -168,6 +169,8 @@ namespace Vectorize
 
       if (mode == RunMode.Interactive)
       {
+        RhinoApp.SetCommandPrompt("Vectorize options");
+
         // Show the interactive dialog box
         var dialog = new VectorizeDialog(doc, conduit);
         //var dialog = new VectorizeDialogOld(doc, conduit);
@@ -183,17 +186,15 @@ namespace Vectorize
       }
       else
       {
-        // Show the command line options
         var go = new GetOption();
-        go.SetCommandPrompt("Vectorization options. Press Enter when done");
+        go.SetCommandPrompt("Vectorize options. Press Enter when done");
         go.AcceptNothing(true);
         while (true)
         {
-          using (var cursor = new WaitCursor())
-          {
-            conduit.TraceBitmap();
-            doc.Views.Redraw();
-          }
+          RhinoApp.SetCommandPrompt("Tracing image, please wait");
+          conduit.TraceBitmap();
+          doc.Views.Redraw();
+          go.SetCommandPrompt("Vectorize options. Press Enter when done");
 
           go.ClearCommandOptions();
 

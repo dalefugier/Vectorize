@@ -1,9 +1,9 @@
 ﻿using Eto.Drawing;
 using Eto.Forms;
 using Rhino;
-using Rhino.UI;
 using Rhino.UI.Controls;
 using Rhino.UI.Forms;
+using Rhino.Runtime;
 using System;
 using VectorizeCommon;
 
@@ -256,11 +256,13 @@ namespace Vectorize
       if (m_allow_update_and_redraw && null != m_doc && null != m_conduit)
       {
         m_allow_update_and_redraw = false;
-        using (var cursor = new WaitCursor())
-        {
-          m_conduit.TraceBitmap();
-          m_doc.Views.Redraw();
-        }
+
+        RhinoApp.SetCommandPrompt("Tracing image, please wait");
+        m_conduit.TraceBitmap();
+        m_doc.Views.Redraw();
+        var msg = HostUtils.RunningOnOSX ? "Apply" : "OK";
+        RhinoApp.SetCommandPrompt($"Vectorize options. Press {msg} when done");
+
         m_allow_update_and_redraw = true;
       }
     }

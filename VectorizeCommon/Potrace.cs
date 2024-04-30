@@ -1,9 +1,8 @@
 ﻿using Rhino;
 using Rhino.Geometry;
+using Rhino.UI;
 using System;
-using System.CodeDom.Compiler;
 using System.Collections.Generic;
-using System.IO;
 
 namespace VectorizeCommon
 {
@@ -17,13 +16,7 @@ namespace VectorizeCommon
       if (null == bitmap)
         return null;
 
-      using (var stream = new MemoryStream())
-      {
-        bitmap.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
-        stream.Seek(0, SeekOrigin.Begin);
-        var etoBitmap = new Eto.Drawing.Bitmap(stream);
-        return etoBitmap;
-      }
+      return bitmap.ToEto();
     }
 
     /// <summary>
