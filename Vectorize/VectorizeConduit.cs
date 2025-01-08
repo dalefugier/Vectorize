@@ -51,7 +51,7 @@ namespace Vectorize
     {
       if (null != m_curves && m_curves.Count > 0)
       {
-        foreach (var curve in m_curves)
+        foreach (Curve curve in m_curves)
           curve.Dispose();
         m_curves.Clear();
       }
@@ -82,7 +82,7 @@ namespace Vectorize
     /// </summary>
     protected override void DrawOverlay(DrawEventArgs e)
     {
-      for (var i = 0; i < m_curves.Count; i++)
+      for (int i = 0; i < m_curves.Count; i++)
       {
         if (i == 0 && !m_parameters.IncludeBorder)
           continue;
@@ -113,12 +113,12 @@ namespace Vectorize
       }
 
       // Trace the bitmap
-      var potrace = Potrace.Trace(m_potraceBitmap, m_parameters);
+      Potrace potrace = Potrace.Trace(m_potraceBitmap, m_parameters);
       if (null != potrace)
       {
 
         // The first curve is always the border curve no matter what
-        var corners = new Point3d[] {
+        Point3d[] corners = new Point3d[] {
           Point3d.Origin,
           new Point3d(m_etoBitmap.Width, 0.0, 0.0),
           new Point3d(m_etoBitmap.Width, m_etoBitmap.Height, 0.0),
@@ -126,14 +126,14 @@ namespace Vectorize
           Point3d.Origin
           };
 
-        var border = new PolylineCurve(corners);
+        PolylineCurve border = new PolylineCurve(corners);
         m_curves.Add(border);
 
         // Harvest the Potrace path curves
-        var potracePath = potrace.Path;
+        PotracePath potracePath = potrace.Path;
         while (null != potracePath)
         {
-          var curve = potracePath.Curve;
+          Curve curve = potracePath.Curve;
           if (null != curve)
             m_curves.Add(curve);
           potracePath = potracePath.Next;
@@ -144,8 +144,8 @@ namespace Vectorize
           // Scale the output, per the calculation made in the command.
           if (m_scaleX != 1.0 || m_scaleY != 1.0)
           {
-            var xform = Transform.Scale(Plane.WorldXY, m_scaleX, m_scaleY, 1.0);
-            for (var i = 0; i < m_curves.Count; i++)
+            Transform xform = Transform.Scale(Plane.WorldXY, m_scaleX, m_scaleY, 1.0);
+            for (int i = 0; i < m_curves.Count; i++)
               m_curves[i].Transform(xform);
           }
           m_bbox = m_curves[0].GetBoundingBox(true);

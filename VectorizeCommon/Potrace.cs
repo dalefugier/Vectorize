@@ -27,7 +27,7 @@ namespace VectorizeCommon
       if (null == bitmap)
         return false;
 
-      using (var bitmapData = bitmap.Lock())
+      using (Eto.Drawing.BitmapData bitmapData = bitmap.Lock())
       {
         if (bitmapData.BytesPerPixel == 4)
           return true;
@@ -50,9 +50,9 @@ namespace VectorizeCommon
       if (null == bitmap)
         return null;
 
-      var size = new Eto.Drawing.Size(bitmap.Width, bitmap.Height);
-      var etoBitmap = new Eto.Drawing.Bitmap(size, Eto.Drawing.PixelFormat.Format24bppRgb);
-      using (var graphics = new Eto.Drawing.Graphics(etoBitmap))
+      Eto.Drawing.Size size = new Eto.Drawing.Size(bitmap.Width, bitmap.Height);
+      Eto.Drawing.Bitmap etoBitmap = new Eto.Drawing.Bitmap(size, Eto.Drawing.PixelFormat.Format24bppRgb);
+      using (Eto.Drawing.Graphics graphics = new Eto.Drawing.Graphics(etoBitmap))
         graphics.DrawImage(bitmap, 0, 0);
 
       return etoBitmap;
@@ -290,25 +290,25 @@ namespace VectorizeCommon
       if (null == settings)
         throw new ArgumentNullException(nameof(settings));
       // TurdSize
-      if (settings.TryGetInteger(nameof(TurdSize), out var turdSize))
+      if (settings.TryGetInteger(nameof(TurdSize), out int turdSize))
         TurdSize = turdSize;
       // TurnPolicy
-      if (settings.TryGetInteger(nameof(TurnPolicy), out var turnPolicy))
+      if (settings.TryGetInteger(nameof(TurnPolicy), out int turnPolicy))
         TurnPolicy = (PotraceTurnPolicy)turnPolicy;
       // AlphaMax
-      if (settings.TryGetDouble(nameof(AlphaMax), out var alphaMax))
+      if (settings.TryGetDouble(nameof(AlphaMax), out double alphaMax))
         AlphaMax = alphaMax;
       // OptimizeCurve
-      if (settings.TryGetBool(nameof(OptimizeCurve), out var optimizeCurve))
+      if (settings.TryGetBool(nameof(OptimizeCurve), out bool optimizeCurve))
         OptimizeCurve = optimizeCurve;
       // OptimizeTolerance
-      if (settings.TryGetDouble(nameof(OptimizeTolerance), out var optimizeTolerance))
+      if (settings.TryGetDouble(nameof(OptimizeTolerance), out double optimizeTolerance))
         OptimizeTolerance = optimizeTolerance;
       // Threshold
-      if (settings.TryGetDouble(nameof(Threshold), out var threshold))
+      if (settings.TryGetDouble(nameof(Threshold), out double threshold))
         Threshold = threshold;
       // IncludeBorder
-      if (settings.TryGetBool(nameof(IncludeBorder), out var includeBorder))
+      if (settings.TryGetBool(nameof(IncludeBorder), out bool includeBorder))
         IncludeBorder = includeBorder;
     }
 
@@ -469,20 +469,20 @@ namespace VectorizeCommon
 
       // Do brightness thresholding
       const double brightnessFloor = 0.0;
-      var floor = 3.0 * brightnessFloor * 256.0;
-      var cutoff = 3.0 * brightnessThreshold * 256.0;
-      var values = new bool[bitmap.Width * bitmap.Height];
+      double floor = 3.0 * brightnessFloor * 256.0;
+      double cutoff = 3.0 * brightnessThreshold * 256.0;
+      bool[] values = new bool[bitmap.Width * bitmap.Height];
 
-      using (var bitmapData = bitmap.Lock())
+      using (Eto.Drawing.BitmapData bitmapData = bitmap.Lock())
       {
-        var i = 0;
-        foreach (var argbData in bitmapData.GetPixels())
+        int i = 0;
+        foreach (Eto.Drawing.Color argbData in bitmapData.GetPixels())
         {
-          var alpha = argbData.Ab;
-          var white = 3 * (255 - alpha);
-          var sample = argbData.Rb + argbData.Gb + argbData.Bb;
-          var brightness = sample * alpha / 256 + white;
-          var black = brightness >= floor && brightness < cutoff;
+          int alpha = argbData.Ab;
+          int white = 3 * (255 - alpha);
+          int sample = argbData.Rb + argbData.Gb + argbData.Bb;
+          int brightness = sample * alpha / 256 + white;
+          bool black = brightness >= floor && brightness < cutoff;
           values[i++] = black;
         };
       }
@@ -540,7 +540,7 @@ namespace VectorizeCommon
     /// <returns>A duplicate copy of this bitmap.</returns>
     public PotraceBitmap Duplicate()
     {
-      var ptr = UnsafeNativeMethods.potrace_bitmap_Duplicate(m_ptr);
+      IntPtr ptr = UnsafeNativeMethods.potrace_bitmap_Duplicate(m_ptr);
       return (IntPtr.Zero != ptr) ? new PotraceBitmap(ptr) : null;
     }
 
@@ -651,8 +651,8 @@ namespace VectorizeCommon
     {
       get
       {
-        var ptr = UnsafeNativeMethods.potrace_path_Next(m_ptr);
-        var rc = (IntPtr.Zero != ptr) ? new PotracePath(ptr) : null;
+        IntPtr ptr = UnsafeNativeMethods.potrace_path_Next(m_ptr);
+        PotracePath rc = (IntPtr.Zero != ptr) ? new PotracePath(ptr) : null;
         GC.KeepAlive(this);
         return rc;
       }
@@ -666,37 +666,37 @@ namespace VectorizeCommon
       get
       {
         Curve rc = null;
-        var count = SegmentCount;
+        int count = SegmentCount;
         if (count > 0)
         {
-          var size = count * POINT_STRIDE * CURVE_STRIDE;
-          var values = new double[size];
+          int size = count * POINT_STRIDE * CURVE_STRIDE;
+          double[] values = new double[size];
           if (UnsafeNativeMethods.potrace_path_SegmentPoints(m_ptr, values.Length, values))
           {
-            var polyCurve = new PolyCurve();
+            PolyCurve polyCurve = new PolyCurve();
 
-            var i = 0;
-            for (var c = 0; c < count; c++)
+            int i = 0;
+            for (int c = 0; c < count; c++)
             {
-              var points = new Point3d[CURVE_STRIDE];
-              for (var p = 0; p < CURVE_STRIDE; p++)
+              Point3d[] points = new Point3d[CURVE_STRIDE];
+              for (int p = 0; p < CURVE_STRIDE; p++)
                 points[p] = new Point3d(values[i++], values[i++], 0.0);
 
               if (points[1].IsValid)
               {
-                var bezier = new Rhino.Geometry.BezierCurve(points);
+                BezierCurve bezier = new Rhino.Geometry.BezierCurve(points);
                 polyCurve.AppendSegment(bezier.ToNurbsCurve());
               }
               else
               {
-                var polyline = new PolylineCurve(new Point3d[] { points[0], points[2], points[3] });
+                PolylineCurve polyline = new PolylineCurve(new Point3d[] { points[0], points[2], points[3] });
                 polyCurve.AppendSegment(polyline);
               }
             }
 
             if (polyCurve.IsValid)
             {
-              var curve = polyCurve.CleanUp();
+              Curve curve = polyCurve.CleanUp();
               rc = curve ?? polyCurve;
             }
           }
@@ -713,7 +713,7 @@ namespace VectorizeCommon
     {
       get
       {
-        var rc = UnsafeNativeMethods.potrace_path_Area(m_ptr);
+        int rc = UnsafeNativeMethods.potrace_path_Area(m_ptr);
         GC.KeepAlive(this);
         return rc;
       }
@@ -726,7 +726,7 @@ namespace VectorizeCommon
     {
       get
       {
-        var rc = UnsafeNativeMethods.potrace_path_Sign(m_ptr);
+        bool rc = UnsafeNativeMethods.potrace_path_Sign(m_ptr);
         GC.KeepAlive(this);
         return rc;
       }
@@ -739,7 +739,7 @@ namespace VectorizeCommon
     {
       get
       {
-        var rc = UnsafeNativeMethods.potrace_path_SegmentCount(m_ptr);
+        int rc = UnsafeNativeMethods.potrace_path_SegmentCount(m_ptr);
         GC.KeepAlive(this);
         return rc;
       }
@@ -771,7 +771,7 @@ namespace VectorizeCommon
     /// <returns>The tag.</returns>
     private SegmentType SegmentTag(int index)
     {
-      var rc = (SegmentType)UnsafeNativeMethods.potrace_path_SegmentTag(m_ptr, index);
+      SegmentType rc = (SegmentType)UnsafeNativeMethods.potrace_path_SegmentTag(m_ptr, index);
       GC.KeepAlive(this);
       return rc;
     }
@@ -787,12 +787,12 @@ namespace VectorizeCommon
     /// <returns>The points.</returns>
     private Point3d[] SegmentCornerPoints(int index)
     {
-      var rc = new Point3d[0];
-      var vertices = new double[6]; // 3- 2d points
+      Point3d[] rc = new Point3d[0];
+      double[] vertices = new double[6]; // 3- 2d points
       if (UnsafeNativeMethods.potrace_path_SegmentCornerPoints(m_ptr, index, vertices.Length, vertices))
       {
-        var points = new List<Point3d>(3);
-        for (var vi = 0; vi < vertices.Length; vi += 2)
+        List<Point3d> points = new List<Point3d>(3);
+        for (int vi = 0; vi < vertices.Length; vi += 2)
           points.Add(new Point3d(vertices[vi], vertices[vi + 1], 0.0));
         rc = points.ToArray();
       }
@@ -807,12 +807,12 @@ namespace VectorizeCommon
     /// <returns>The points.</returns>
     private Point3d[] SegmentCurvePoints(int index)
     {
-      var rc = new Point3d[0];
-      var vertices = new double[8]; // 4- 2d points
+      Point3d[] rc = new Point3d[0];
+      double[] vertices = new double[8]; // 4- 2d points
       if (UnsafeNativeMethods.potrace_path_SegmentCurvePoints(m_ptr, index, vertices.Length, vertices))
       {
-        var points = new List<Point3d>(3);
-        for (var vi = 0; vi < vertices.Length; vi += 2)
+        List<Point3d> points = new List<Point3d>(3);
+        for (int vi = 0; vi < vertices.Length; vi += 2)
           points.Add(new Point3d(vertices[vi], vertices[vi + 1], 0.0));
         rc = points.ToArray();
       }
@@ -897,7 +897,7 @@ namespace VectorizeCommon
     {
       get
       {
-        var ptr = UnsafeNativeMethods.potrace_state_PathList(m_ptr);
+        IntPtr ptr = UnsafeNativeMethods.potrace_state_PathList(m_ptr);
         GC.KeepAlive(this);
         return (IntPtr.Zero != ptr) ? new PotracePath(ptr) : null;
       }
@@ -917,7 +917,7 @@ namespace VectorizeCommon
     {
       if (null == bitmap)
         throw new ArgumentNullException(nameof(bitmap));
-      var parameters = new PotraceParameters();
+      PotraceParameters parameters = new PotraceParameters();
       return Trace(bitmap, parameters);
     }
 
@@ -935,9 +935,9 @@ namespace VectorizeCommon
       if (null == parameters)
         throw new ArgumentNullException(nameof(parameters));
 
-      var ptr_const_bitmap = bitmap.ConstPointer();
-      var ptr_const_param = parameters.ConstPointer();
-      var ptr = UnsafeNativeMethods.potrace_state_New(ptr_const_bitmap, ptr_const_param);
+      IntPtr ptr_const_bitmap = bitmap.ConstPointer();
+      IntPtr ptr_const_param = parameters.ConstPointer();
+      IntPtr ptr = UnsafeNativeMethods.potrace_state_New(ptr_const_bitmap, ptr_const_param);
 
       GC.KeepAlive(bitmap);
       GC.KeepAlive(parameters);
@@ -963,7 +963,7 @@ namespace VectorizeCommon
 
     public static string ThresholdTooltip(bool verbose)
     {
-      var str = "Image brightness threshold.";
+      string str = "Image brightness threshold.";
       if (verbose)
         str += " Range is from 0.0 (black) to 1.0 (white).";
       return str;
@@ -979,7 +979,7 @@ namespace VectorizeCommon
 
     public static string TurdSizeTooltip(bool verbose)
     {
-      var str = "Image despeckle threshold.";
+      string str = "Image despeckle threshold.";
       if (verbose)
         str += " Range is from from 0 to 100.";
       return str;
@@ -992,7 +992,7 @@ namespace VectorizeCommon
 
     public static string AlphaMaxTooltip(bool verbose)
     {
-      var str = "Corner detection threshold.";
+      string str = "Corner detection threshold.";
       if (verbose)
         str += " Range is from 0.0 (polygons) to 1.34 (no corner).";
       return str;
@@ -1009,7 +1009,7 @@ namespace VectorizeCommon
 
     public static string OptimizeToleranceTooltip(bool verbose)
     {
-      var str = "Bézier segment optimization tolerance.";
+      string str = "Bézier segment optimization tolerance.";
       if (verbose)
         str += " Range is from 0.0 to 1.0.";
       return str;
