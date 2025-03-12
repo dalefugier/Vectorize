@@ -1,7 +1,7 @@
 ﻿using Eto.Drawing;
 using Eto.Forms;
 using Rhino;
-using Rhino.UI;
+using Rhino.Runtime;
 using Rhino.UI.Controls;
 using Rhino.UI.Forms;
 using VectorizeCommon;
@@ -40,10 +40,10 @@ namespace Vectorize
     /// </summary>
     private RhinoDialogTableLayout CreateTableLayout()
     {
-      var parameters = m_conduit.Parameters;
+      PotraceParameters parameters = m_conduit.Parameters;
 
       // Threshold (0.0, 100.0)
-      var sldThreshold = new Rhino.UI.Controls.Slider(this, true)
+      Rhino.UI.Controls.Slider sldThreshold = new Rhino.UI.Controls.Slider(this, true)
       {
         Decimals = 2,
         DrawTextLabels = true,
@@ -54,7 +54,7 @@ namespace Vectorize
       sldThreshold.SetMinMax(0.0, 100.0);
       sldThreshold.MouseUp += (sender, args) =>
       {
-        var value = sldThreshold.Value1.Value;
+        double value = sldThreshold.Value1.Value;
         if (parameters.ThresholdUi != value)
         {
           parameters.ThresholdUi = value;
@@ -63,7 +63,7 @@ namespace Vectorize
       };
 
       // TurdSize (0 to 100)
-      var sldTurdSize = new Rhino.UI.Controls.Slider(this, false)
+      Rhino.UI.Controls.Slider sldTurdSize = new Rhino.UI.Controls.Slider(this, false)
       {
         Decimals = 0,
         DrawTextLabels = true,
@@ -73,7 +73,7 @@ namespace Vectorize
       sldTurdSize.SetMinMax(0.0, 100.0);
       sldTurdSize.MouseUp += (sender, args) =>
       {
-        var value = (int)sldTurdSize.Value1.Value;
+        int value = (int)sldTurdSize.Value1.Value;
         if (parameters.TurdSize != value)
         {
           parameters.TurdSize = value;
@@ -82,7 +82,7 @@ namespace Vectorize
       };
 
       // AlphaMax (0.0, 1.34)
-      var sldAlphaMax = new Rhino.UI.Controls.Slider(this, false)
+      Rhino.UI.Controls.Slider sldAlphaMax = new Rhino.UI.Controls.Slider(this, false)
       {
         Decimals = 2,
         DrawTextLabels = true,
@@ -92,7 +92,7 @@ namespace Vectorize
       sldAlphaMax.SetMinMax(0.0, 1.34);
       sldAlphaMax.MouseUp += (sender, args) =>
       {
-        var value = sldAlphaMax.Value1.Value;
+        double value = sldAlphaMax.Value1.Value;
         if (parameters.AlphaMax != value)
         {
           parameters.AlphaMax = value;
@@ -101,7 +101,7 @@ namespace Vectorize
       };
 
       // OptimizeTolerance (0.0, 1.0)
-      var sldOptimizeTolerance = new Rhino.UI.Controls.Slider(this, false)
+      Rhino.UI.Controls.Slider sldOptimizeTolerance = new Rhino.UI.Controls.Slider(this, false)
       {
         Decimals = 2,
         DrawTextLabels = true,
@@ -111,7 +111,7 @@ namespace Vectorize
       sldOptimizeTolerance.SetMinMax(0.0, 1.0);
       sldOptimizeTolerance.MouseUp += (sender, args) =>
       {
-        var value = sldOptimizeTolerance.Value1.Value;
+        double value = sldOptimizeTolerance.Value1.Value;
         if (parameters.OptimizeTolerance != value)
         {
           parameters.OptimizeTolerance = value;
@@ -120,7 +120,7 @@ namespace Vectorize
       };
 
       // IncludeBorder
-      var chkIncludeBorder = new CheckBox
+      CheckBox chkIncludeBorder = new CheckBox
       {
         Checked = parameters.IncludeBorder,
         ThreeState = false,
@@ -128,16 +128,16 @@ namespace Vectorize
       };
       chkIncludeBorder.CheckedChanged += (sender, args) =>
       {
-        var value = chkIncludeBorder.Checked.Value;
+        bool value = chkIncludeBorder.Checked.Value;
         if (parameters.IncludeBorder != value)
         {
           parameters.IncludeBorder = value;
-          UpdateAndRedraw();
+          m_doc.Views.Redraw();
         }
       };
 
       // RestoreDefaults
-      var btnRestoreDefaults = new Button { Text = "Restore Defaults" };
+      Button btnRestoreDefaults = new Button { Text = "Restore Defaults" };
       btnRestoreDefaults.Click += (sender, args) =>
       {
         m_update_and_redraw = true;
@@ -153,10 +153,10 @@ namespace Vectorize
 
       // Layout the controls
 
-      var layout = new RhinoDialogTableLayout(false); // { Spacing = new Eto.Drawing.Size(10, 8) };
+      RhinoDialogTableLayout layout = new RhinoDialogTableLayout(false); // { Spacing = new Eto.Drawing.Size(10, 8) };
       //layout.Rows.Add(new TableRow(new TableCell(new LabelSeparator { Text = "Vectorization options" }, true)));
 
-      var table = new TableLayout { Padding = new Eto.Drawing.Padding(8, 0, 0, 0), Spacing = new Size(10, 8) };
+      TableLayout table = new TableLayout { Padding = new Eto.Drawing.Padding(8, 0, 0, 0), Spacing = new Size(10, 8) };
       table.Rows.Add(new TableRow(new TableCell(new Label { Text = PotraceStrings.ThresholdLabel(false) }), new TableCell(sldThreshold)));
       table.Rows.Add(new TableRow(new TableCell(new Label { Text = PotraceStrings.TurdSizeLabel(true) }), new TableCell(sldTurdSize)));
       table.Rows.Add(new TableRow(new TableCell(new Label { Text = PotraceStrings.AlphaMaxLabel(true) }), new TableCell(sldAlphaMax)));
@@ -180,11 +180,13 @@ namespace Vectorize
         return;
 
       m_update_and_redraw = true;
-      using (var cursor = new WaitCursor())
-      {
-        m_conduit.TraceBitmap();
-        m_doc.Views.Redraw();
-      }
+
+      RhinoApp.SetCommandPrompt("Tracing image, please wait");
+      m_conduit.TraceBitmap();
+      m_doc.Views.Redraw();
+      string msg = HostUtils.RunningOnOSX ? "Apply" : "OK";
+      RhinoApp.SetCommandPrompt($"Vectorize options. Press {msg} when done");
+
       m_update_and_redraw = false;
     }
 

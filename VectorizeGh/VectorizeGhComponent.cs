@@ -33,7 +33,7 @@ namespace VectorizeGh
     /// </summary>
     protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
     {
-      var args = new PotraceParameters();
+      PotraceParameters args = new PotraceParameters();
 
       idxPath = pManager.AddTextParameter(PotraceStrings.PathLabel, "P", PotraceStrings.PathTooltip, GH_ParamAccess.item);
       idxThreshold = pManager.AddNumberParameter(PotraceStrings.ThresholdLabel(false), "T", PotraceStrings.ThresholdTooltip(true), GH_ParamAccess.item, args.Threshold);
@@ -102,30 +102,30 @@ namespace VectorizeGh
           return;
         }
       }
-      catch (Exception ex) 
+      catch (Exception ex)
       {
         AddRuntimeMessage(GH_RuntimeMessageLevel.Error, ex.Message);
         return;
       }
 
       // Calculate scale factor so curves of a reasonable size are added to Rhino
-      var doc = RhinoDoc.ActiveDoc;
+      RhinoDoc doc = RhinoDoc.ActiveDoc;
       if (null == doc)
         return;
 
-      var unit_scale = (doc.ModelUnitSystem != UnitSystem.Inches)
+      double unit_scale = (doc.ModelUnitSystem != UnitSystem.Inches)
         ? RhinoMath.UnitScale(UnitSystem.Inches, doc.ModelUnitSystem)
         : 1.0;
 
-      var scale = (double)(1.0 / systemBitmap.HorizontalResolution * unit_scale);
+      double scale = (double)(1.0 / systemBitmap.HorizontalResolution * unit_scale);
 
       //////////////////////////////////////////////////////////
       // Get properties
 
-      var args = new PotraceParameters();
+      PotraceParameters args = new PotraceParameters();
 
       // Threshold
-      var threshold = args.Threshold;
+      double threshold = args.Threshold;
       if (DA.GetData(idxThreshold, ref threshold))
       {
         if (threshold < 0.0 || threshold > 1.0)
@@ -137,7 +137,7 @@ namespace VectorizeGh
       }
 
       // TurdSize
-      var turdSize = args.TurdSize;
+      int turdSize = args.TurdSize;
       if (DA.GetData(idxTurdSize, ref turdSize))
       {
         if (turdSize < 0 || turdSize > 100)
@@ -149,7 +149,7 @@ namespace VectorizeGh
       }
 
       // AlphaMax
-      var alphaMax = args.AlphaMax;
+      double alphaMax = args.AlphaMax;
       if (DA.GetData(idxAlphaMax, ref alphaMax))
       {
         if (alphaMax < 0.0 || alphaMax > 1.34)
@@ -161,7 +161,7 @@ namespace VectorizeGh
       }
 
       // OptimizeTolerance
-      var optimizeTolerance = args.OptimizeTolerance;
+      double optimizeTolerance = args.OptimizeTolerance;
       if (DA.GetData(idxOptimizeTolerance, ref optimizeTolerance))
       {
         if (optimizeTolerance < 0.0 || optimizeTolerance > 1.0)
@@ -173,7 +173,7 @@ namespace VectorizeGh
       }
 
       // IncludeBorder
-      var includeBorder = args.IncludeBorder;
+      bool includeBorder = args.IncludeBorder;
       if (DA.GetData(idxIncludeBorder, ref includeBorder))
       {
         args.IncludeBorder = includeBorder;
@@ -182,7 +182,7 @@ namespace VectorizeGh
       //////////////////////////////////////////////////////////
       // Convert the bitmap to an Eto bitmap
 
-      var etoBitmap = BitmapHelpers.ConvertBitmapToEto(systemBitmap);
+      Eto.Drawing.Bitmap etoBitmap = BitmapHelpers.ConvertBitmapToEto(systemBitmap);
       if (null == etoBitmap)
       {
         AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to convert image to Eto bitmap.");
@@ -191,7 +191,7 @@ namespace VectorizeGh
 
       if (!BitmapHelpers.IsCompatibleBitmap(etoBitmap))
       {
-        var tempBitmap = BitmapHelpers.MakeCompatibleBitmap(etoBitmap);
+        Eto.Drawing.Bitmap tempBitmap = BitmapHelpers.MakeCompatibleBitmap(etoBitmap);
         if (null == tempBitmap)
         {
           AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Image has an incompatible pixel format.");
@@ -209,12 +209,12 @@ namespace VectorizeGh
       //////////////////////////////////////////////////////////
       // Create Potrace bitmap
 
-      var potraceBitmap = new PotraceBitmap(etoBitmap, args.Threshold);
+      PotraceBitmap potraceBitmap = new PotraceBitmap(etoBitmap, args.Threshold);
 
       //////////////////////////////////////////////////////////
       // Trace the bitmap
 
-      var potrace = Potrace.Trace(potraceBitmap, args);
+      Potrace potrace = Potrace.Trace(potraceBitmap, args);
       if (null == potrace)
       {
         AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Unable to trace iamge.");
@@ -223,12 +223,12 @@ namespace VectorizeGh
 
       //////////////////////////////////////////////////////////
       // Get results
-      var outCurves = new List<Curve>();
+      List<Curve> outCurves = new List<Curve>();
 
       // Create the border curve if needed
       if (args.IncludeBorder)
       {
-        var corners = new Point3d[] {
+        Point3d[] corners = new Point3d[] {
           Point3d.Origin,
           new Point3d(etoBitmap.Width, 0.0, 0.0),
           new Point3d(etoBitmap.Width, etoBitmap.Height, 0.0),
@@ -236,15 +236,15 @@ namespace VectorizeGh
           Point3d.Origin
         };
 
-        var border = new PolylineCurve(corners);
+        PolylineCurve border = new PolylineCurve(corners);
         outCurves.Add(border);
       }
 
       // Harvest the Potrace path curves
-      var potracePath = potrace.Path;
+      PotracePath potracePath = potrace.Path;
       while (null != potracePath)
       {
-        var curve = potracePath.Curve;
+        Curve curve = potracePath.Curve;
         if (null != curve)
           outCurves.Add(curve);
         potracePath = potracePath.Next;
@@ -253,8 +253,8 @@ namespace VectorizeGh
       // Scale the output, per the calculation made above
       if (outCurves.Count > 0 && scale != 1.0)
       {
-        var xform = Transform.Scale(Point3d.Origin, scale);
-        for (var i = 0; i < outCurves.Count; i++)
+        Transform xform = Transform.Scale(Point3d.Origin, scale);
+        for (int i = 0; i < outCurves.Count; i++)
           outCurves[i].Transform(xform);
       }
 

@@ -1,7 +1,7 @@
 ﻿using Eto.Drawing;
 using Eto.Forms;
 using Rhino;
-using Rhino.UI;
+using Rhino.Runtime;
 using Rhino.UI.Controls;
 using Rhino.UI.Forms;
 using System;
@@ -38,10 +38,10 @@ namespace Vectorize
     private RhinoDialogTableLayout CreateTableLayout()
     {
       // Create controls and define behaviors
-      var parameters = m_conduit.Parameters;
+      PotraceParameters parameters = m_conduit.Parameters;
 
       // Threshold slider (0.0 - 100.0)
-      var sliderThreshold = new Eto.Forms.Slider
+      Eto.Forms.Slider sliderThreshold = new Eto.Forms.Slider
       {
         MaxValue = 100,
         MinValue = 0,
@@ -52,7 +52,7 @@ namespace Vectorize
       };
 
       // Threshold stepper (0.0 - 100.0)
-      var stepperThreshold = new NumericUpDownWithUnitParsing
+      NumericUpDownWithUnitParsing stepperThreshold = new NumericUpDownWithUnitParsing
       {
         DecimalPlaces = 0,
         Increment = 1.0,
@@ -100,12 +100,12 @@ namespace Vectorize
       };
 
       // TurnPolicy (enum)
-      var dropdownTurnPolicy = new DropDown
+      DropDown dropdownTurnPolicy = new DropDown
       {
         ToolTip = PotraceStrings.TurnPolicyTooltip
       };
 
-      foreach (var str in Enum.GetNames(typeof(PotraceTurnPolicy)))
+      foreach (string str in Enum.GetNames(typeof(PotraceTurnPolicy)))
         dropdownTurnPolicy.Items.Add(str);
       dropdownTurnPolicy.SelectedIndex = (int)parameters.TurnPolicy;
 
@@ -119,7 +119,7 @@ namespace Vectorize
       };
 
       // TurdSize stepper (0 - 100)
-      var stepperTurdSize = new NumericUpDownWithUnitParsing
+      NumericUpDownWithUnitParsing stepperTurdSize = new NumericUpDownWithUnitParsing
       {
         DecimalPlaces = 0,
         Increment = 1.0,
@@ -135,7 +135,7 @@ namespace Vectorize
         UpdateAndRedraw();
       };
 
-      var stepperAlphaMax = new NumericUpDownWithUnitParsing
+      NumericUpDownWithUnitParsing stepperAlphaMax = new NumericUpDownWithUnitParsing
       {
         DecimalPlaces = 1,
         Increment = 0.1,
@@ -151,7 +151,7 @@ namespace Vectorize
         UpdateAndRedraw();
       };
 
-      var checkBorder = new CheckBox
+      CheckBox checkBorder = new CheckBox
       {
         Checked = parameters.IncludeBorder,
         ThreeState = false,
@@ -163,14 +163,14 @@ namespace Vectorize
         UpdateAndRedraw();
       };
 
-      var checkOptimize = new CheckBox
+      CheckBox checkOptimize = new CheckBox
       {
         Checked = parameters.OptimizeCurve,
         ThreeState = false,
         ToolTip = PotraceStrings.OptimizeCurveTooltip
       };
 
-      var stepperOptimizeTolerance = new NumericUpDownWithUnitParsing
+      NumericUpDownWithUnitParsing stepperOptimizeTolerance = new NumericUpDownWithUnitParsing
       {
         DecimalPlaces = m_doc.ModelDistanceDisplayPrecision,
         Enabled = parameters.OptimizeCurve,
@@ -195,7 +195,7 @@ namespace Vectorize
         UpdateAndRedraw();
       };
 
-      var buttonDefaults = new Button { Text = "Restore Defaults" };
+      Button buttonDefaults = new Button { Text = "Restore Defaults" };
       buttonDefaults.Click += (sender, args) =>
       {
         if (m_allow_update_and_redraw)
@@ -217,20 +217,20 @@ namespace Vectorize
 
       // Layout the controls
 
-      var minimum_size = new Eto.Drawing.Size(150, 0);
+      Size minimum_size = new Eto.Drawing.Size(150, 0);
 
-      var layout = new RhinoDialogTableLayout(false) { Spacing = new Eto.Drawing.Size(10, 8) };
+      RhinoDialogTableLayout layout = new RhinoDialogTableLayout(false) { Spacing = new Eto.Drawing.Size(10, 8) };
       layout.Rows.Add(new TableRow(new TableCell(new LabelSeparator { Text = "Vectorization options" }, true)));
 
-      var panel0 = new Panel { MinimumSize = minimum_size, Content = new Label() { Text = PotraceStrings.ThresholdLabel(false) } };
-      var table0 = new TableLayout { Padding = new Eto.Drawing.Padding(8, 0, 0, 0) };
-      table0.Rows.Add(new TableRow(new TableCell(panel0), new TableCell(stepperThreshold), new TableCell(sliderThreshold, true) ));
+      Panel panel0 = new Panel { MinimumSize = minimum_size, Content = new Label() { Text = PotraceStrings.ThresholdLabel(false) } };
+      TableLayout table0 = new TableLayout { Padding = new Eto.Drawing.Padding(8, 0, 0, 0) };
+      table0.Rows.Add(new TableRow(new TableCell(panel0), new TableCell(stepperThreshold), new TableCell(sliderThreshold, true)));
       layout.Rows.Add(table0);
 
-      var panel1 = new Panel { MinimumSize = minimum_size, Content = new Label() { Text = PotraceStrings.TurnPolicyLabel } };
-      var panel2 = new Panel { MinimumSize = minimum_size, Content = new Label() { Text = PotraceStrings.IncludeBorderLabel(true) } };
+      Panel panel1 = new Panel { MinimumSize = minimum_size, Content = new Label() { Text = PotraceStrings.TurnPolicyLabel } };
+      Panel panel2 = new Panel { MinimumSize = minimum_size, Content = new Label() { Text = PotraceStrings.IncludeBorderLabel(true) } };
 
-      var table1 = new TableLayout { Padding = new Eto.Drawing.Padding(8, 0, 0, 0), Spacing = new Size(10, 8) };
+      TableLayout table1 = new TableLayout { Padding = new Eto.Drawing.Padding(8, 0, 0, 0), Spacing = new Size(10, 8) };
       table1.Rows.Add(new TableRow(new TableCell(panel1), new TableCell(dropdownTurnPolicy)));
       table1.Rows.Add(new TableRow(new TableCell(new Label() { Text = PotraceStrings.TurdSizeLabel(false) }), new TableCell(stepperTurdSize)));
       table1.Rows.Add(new TableRow(new TableCell(new Label() { Text = PotraceStrings.AlphaMaxLabel(true) }), new TableCell(stepperAlphaMax)));
@@ -240,8 +240,8 @@ namespace Vectorize
 
       layout.Rows.Add(new TableRow(new TableCell(new LabelSeparator { Text = "Curve optimization" }, true)));
 
-      var panel3 = new Panel { MinimumSize = minimum_size, Content = new Label() { Text = PotraceStrings.OptimizeCurveLabel } };
-      var table2 = new TableLayout { Padding = new Eto.Drawing.Padding(8, 0, 0, 0), Spacing = new Size(10, 8) };
+      Panel panel3 = new Panel { MinimumSize = minimum_size, Content = new Label() { Text = PotraceStrings.OptimizeCurveLabel } };
+      TableLayout table2 = new TableLayout { Padding = new Eto.Drawing.Padding(8, 0, 0, 0), Spacing = new Size(10, 8) };
       table2.Rows.Add(new TableRow(new TableCell(panel3), new TableCell(checkOptimize)));
       table2.Rows.Add(new TableRow(new TableCell(new Label() { Text = PotraceStrings.OptimizeToleranceLabel(false) }), new TableCell(stepperOptimizeTolerance)));
       table2.Rows.Add(null);
@@ -256,11 +256,13 @@ namespace Vectorize
       if (m_allow_update_and_redraw && null != m_doc && null != m_conduit)
       {
         m_allow_update_and_redraw = false;
-        using (var cursor = new WaitCursor())
-        {
-          m_conduit.TraceBitmap();
-          m_doc.Views.Redraw();
-        }
+
+        RhinoApp.SetCommandPrompt("Tracing image, please wait");
+        m_conduit.TraceBitmap();
+        m_doc.Views.Redraw();
+        string msg = HostUtils.RunningOnOSX ? "Apply" : "OK";
+        RhinoApp.SetCommandPrompt($"Vectorize options. Press {msg} when done");
+
         m_allow_update_and_redraw = true;
       }
     }
