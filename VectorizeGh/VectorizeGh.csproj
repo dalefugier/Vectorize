@@ -7,10 +7,10 @@
     <OutputType>Library</OutputType>
     <Title>VectorizeGh</Title>
     <Company>Robert McNeel &amp; Associates</Company>
-    <Copyright>Copyright © 2020-2024, Robert McNeel &amp; Associates</Copyright>
+    <Copyright>Copyright © 2020-2026, Robert McNeel &amp; Associates</Copyright>
     <Product>Vectorize</Product>
     <Description>Vectorize plug-in for Rhinoceros®</Description>
-    <Version>8.4.24044.15001</Version>
+    <Version>8.29.26063.11001</Version>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <OutputPath>..\Bin\Debug\</OutputPath>
@@ -25,6 +25,6 @@
     <ProjectReference Include="..\VectorizeCommon\VectorizeCommon.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Grasshopper" Version="8.4.24044.15001" IncludeAssets="compile;build" />
+    <PackageReference Include="Grasshopper" Version="8.29.26063.11001" IncludeAssets="compile;build" />
   </ItemGroup>
 </Project>
