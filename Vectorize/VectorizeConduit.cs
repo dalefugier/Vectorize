@@ -42,10 +42,7 @@ namespace Vectorize
     /// The list of outline curves created from the path curves.
     /// These curve may end up in the Rhino document.
     /// </summary>
-    public List<Curve> Curves
-    {
-      get => m_curves;
-    }
+    public List<Curve> Curves => m_curves;
 
     public void ClearCurves()
     {

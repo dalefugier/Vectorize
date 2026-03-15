@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net48</TargetFrameworks>
+    <TargetFrameworks>net8;net48</TargetFrameworks>
     <TargetExt>.rhp</TargetExt>
     <OutputType>Library</OutputType>
     <Title>Vectorize</Title>
@@ -24,5 +24,6 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="RhinoCommon" Version="8.29.26063.11001" IncludeAssets="compile;build" />
+    <PackageReference Include="System.Drawing.Common" Version="8.0.0" />
   </ItemGroup>
  </Project>

@@ -173,8 +173,6 @@ namespace Vectorize
 
         // Show the interactive dialog box
         VectorizeDialog dialog = new VectorizeDialog(doc, conduit);
-        //var dialog = new VectorizeDialogOld(doc, conduit);
-        dialog.RestorePosition();
         Result result = dialog.ShowSemiModal(doc, RhinoEtoApp.MainWindow);
         dialog.SavePosition();
         if (result != Result.Success)

@@ -195,7 +195,7 @@ namespace Vectorize
         }
       }
     }
-    
+
     /// <summary>
     /// Trace the bitmap and redraw the results.
     /// </summary>
