@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net48</TargetFrameworks>
+    <TargetFrameworks>net7;net48</TargetFrameworks>
     <OutputType>Library</OutputType>
     <Title>VectorizeCommon</Title>
     <Company>Robert McNeel &amp; Associates</Company>
@@ -17,5 +17,8 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="RhinoCommon" Version="8.29.26063.11001" IncludeAssets="compile;build" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\VectorizeLib\VectorizeLib.vcxproj" />
   </ItemGroup>
 </Project>
