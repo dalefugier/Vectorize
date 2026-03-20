@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net8;net48</TargetFrameworks>
+    <TargetFrameworks>net48</TargetFrameworks>
     <OutputType>Library</OutputType>
     <Title>VectorizeCommon</Title>
     <Company>Robert McNeel &amp; Associates</Company>
@@ -10,13 +10,12 @@
     <Version>8.29.26063.11001</Version>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <OutputPath>..\Bin\Debug\</OutputPath>
+    <OutputPath>..\bin\Debug\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-    <OutputPath>..\Bin\Release\</OutputPath>
+    <OutputPath>..\bin\Release\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="RhinoCommon" Version="8.29.26063.11001" IncludeAssets="compile;build" />
-    <PackageReference Include="System.Drawing.Common" Version="8.0.0" />
   </ItemGroup>
 </Project>

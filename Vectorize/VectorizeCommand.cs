@@ -34,6 +34,7 @@ namespace Vectorize
     /// </summary>
     public static string HelpUrl => "https://github.com/dalefugier/Vectorize/wiki";
 
+
     /// <summary>
     /// Show the help url.
     /// </summary>
@@ -62,6 +63,11 @@ namespace Vectorize
     {
       ShowHelpUrl();
     }
+
+    /// <summary>
+    /// Command.CommandContextHelpUrl override
+    /// </summary>
+    protected override string CommandContextHelpUrl => HelpUrl;
 
     /// <summary>
     /// Command.RunCommand override
