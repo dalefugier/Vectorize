@@ -27,6 +27,9 @@ namespace VectorizeCommon
       if (null == bitmap)
         return false;
 
+      if (Rhino.Runtime.HostUtils.RunningOnOSX)
+        return false;
+
       using (Eto.Drawing.BitmapData bitmapData = bitmap.Lock())
       {
         if (bitmapData.BytesPerPixel == 4)

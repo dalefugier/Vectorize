@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net7;net48</TargetFrameworks>
+    <TargetFrameworks>net7.0;net48</TargetFrameworks>
     <TargetExt>.gha</TargetExt>
     <Version>1.0</Version>
     <OutputType>Library</OutputType>
@@ -27,4 +27,7 @@
     <PackageReference Include="Grasshopper" Version="8.29.26063.11001" IncludeAssets="compile;build" />
     <PackageReference Include="System.Resources.Extensions" Version="7.0.0" />
   </ItemGroup>
+	<PropertyGroup>
+    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
+	</PropertyGroup>
 </Project>
