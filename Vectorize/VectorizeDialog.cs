@@ -47,10 +47,10 @@ namespace Vectorize
         Decimals = 2,
         DrawTextLabels = true,
         ToolTip = PotraceStrings.ThresholdTooltip(false),
-        Value1 = m_conduit.Parameters.ThresholdUi,
         Width = 200
       };
       thresholdSlider.SetMinMax(0.0, 100.0);
+      thresholdSlider.Value1 = m_conduit.Parameters.ThresholdUi;
       thresholdSlider.PropertyChanged += OnThresholdPropertyChanged;
 
       // TurdSize slider (0 to 100)
@@ -58,10 +58,10 @@ namespace Vectorize
       {
         Decimals = 0,
         DrawTextLabels = true,
-        ToolTip = PotraceStrings.TurdSizeTooltip(false),
-        Value1 = m_conduit.Parameters.TurdSize
+        ToolTip = PotraceStrings.TurdSizeTooltip(false)
       };
       turdSizeSlider.SetMinMax(0.0, 100.0);
+      turdSizeSlider.Value1 = m_conduit.Parameters.TurdSize;
       turdSizeSlider.PropertyChanged += OnTurdSizePropertyChanged;
 
       // AlphaMax slider (0.0, 1.34)
@@ -69,10 +69,10 @@ namespace Vectorize
       {
         Decimals = 2,
         DrawTextLabels = true,
-        ToolTip = PotraceStrings.AlphaMaxTooltip(false),
-        Value1 = m_conduit.Parameters.AlphaMax
+        ToolTip = PotraceStrings.AlphaMaxTooltip(false)
       };
       alphaMaxSlider.SetMinMax(0.0, 1.34);
+      alphaMaxSlider.Value1 = m_conduit.Parameters.AlphaMax;
       alphaMaxSlider.PropertyChanged += OnAlphaMaxPropertyChanged;
 
       // OptimizeTolerance slider (0.0, 1.0)
@@ -80,10 +80,10 @@ namespace Vectorize
       {
         Decimals = 2,
         DrawTextLabels = true,
-        ToolTip = PotraceStrings.OptimizeToleranceTooltip(false),
-        Value1 = m_conduit.Parameters.OptimizeTolerance
+        ToolTip = PotraceStrings.OptimizeToleranceTooltip(false)
       };
       optimizeToleranceSlider.SetMinMax(0.0, 1.0);
+      optimizeToleranceSlider.Value1 = m_conduit.Parameters.OptimizeTolerance;
       optimizeToleranceSlider.PropertyChanged += OnOptimizeTolerancePropertyChanged;
 
       // IncludeBorder checkbox
