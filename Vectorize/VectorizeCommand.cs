@@ -112,7 +112,7 @@ namespace Vectorize
       // I'm not convinced this is useful...
       if (true)
       {
-        string format = $"F{doc.DistanceDisplayPrecision}";
+        string format = $"F{doc.ModelDistanceDisplayPrecision}";
 
         // Print image size in pixels
         RhinoApp.WriteLine("Image size in pixels: {0} x {1}", systemBitmap.Width, systemBitmap.Height);

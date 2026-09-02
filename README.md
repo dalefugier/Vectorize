@@ -1,5 +1,5 @@
 # Vectorize
-Vectorize is a free, open source image tracing plug-in for Rhino 8.
+Vectorize is a free, open source image tracing plug-in for Rhino 9.
 
 <img width="128" height="128" src="https://github.com/dalefugier/Vectorize/raw/main/Bonus/Vectorize.png">
 
@@ -10,6 +10,7 @@ Vectorize uses the famous [Potrace](http://potrace.sourceforge.net/) by Peter Se
 The following tool is required to build Vectorize:
 
 - [Microsoft Visual Studio](https://visualstudio.microsoft.com/)
+- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
 - [Apple Xcode](https://developer.apple.com/xcode/)
  
 Note, the solution uses the [RhinoCommon](https://www.nuget.org/packages/rhinocommon) package available on [NuGet](https://www.nuget.org/).

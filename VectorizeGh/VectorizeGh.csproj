@@ -1,15 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net7.0;net48</TargetFrameworks>
+    <TargetFramework>net10.0</TargetFramework>
     <TargetExt>.gha</TargetExt>
-    <Version>1.0</Version>
     <OutputType>Library</OutputType>
     <Title>VectorizeGh</Title>
     <Company>Robert McNeel &amp; Associates</Company>
     <Copyright>Copyright © 2020-2026, Robert McNeel &amp; Associates</Copyright>
     <Product>Vectorize</Product>
     <Description>Vectorize plug-in for Rhinoceros®</Description>
-    <Version>8.29.26063.11001</Version>
+    <Version>9.0.26244.12303</Version>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <OutputPath>..\bin\Debug\</OutputPath>
@@ -24,8 +23,8 @@
     <ProjectReference Include="..\VectorizeCommon\VectorizeCommon.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Grasshopper" Version="8.29.26063.11001" IncludeAssets="compile;build" />
-    <PackageReference Include="System.Resources.Extensions" Version="7.0.0" />
+    <PackageReference Include="Grasshopper" Version="9.0.26244.12303-beta" IncludeAssets="compile;build" />
+    <PackageReference Include="System.Resources.Extensions" Version="10.0.0" />
   </ItemGroup>
 	<PropertyGroup>
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
