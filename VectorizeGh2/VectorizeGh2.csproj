@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <TargetExt>.rhp</TargetExt>
+    <OutputType>Library</OutputType>
+    <Title>VectorizeGh2</Title>
+    <Company>Robert McNeel &amp; Associates</Company>
+    <Copyright>Copyright © 2020-2026, Robert McNeel &amp; Associates</Copyright>
+    <Product>Vectorize</Product>
+    <Description>Vectorize plug-in for Grasshopper 2</Description>
+    <Version>9.0.26244.12303</Version>
+    <!--
+      The Grasshopper2 package does not restrict its assets, so the platform
+      compatibility analyzer runs here and flags the System.Drawing calls used to
+      read the source image. The Vectorize and VectorizeGh projects make the same
+      calls without warning only because their RhinoCommon reference excludes
+      analyzer assets, so this suppression keeps the projects consistent rather
+      than hiding a new problem.
+    -->
+    <NoWarn>CA1416</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <OutputPath>..\bin\Debug\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <OutputPath>..\bin\Release\</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\**\*" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\VectorizeCommon\VectorizeCommon.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Grasshopper2" Version="9.0.26244.12303-beta" />
+  </ItemGroup>
+</Project>
