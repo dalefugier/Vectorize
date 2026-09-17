@@ -8,7 +8,7 @@
     <Copyright>Copyright © 2020-2026, Robert McNeel &amp; Associates</Copyright>
     <Product>Vectorize</Product>
     <Description>Vectorize plug-in for Grasshopper 2</Description>
-    <Version>9.0.26244.12303</Version>
+    <Version>9.0.26258.12303</Version>
     <!--
       The Grasshopper2 package does not restrict its assets, so the platform
       compatibility analyzer runs here and flags the System.Drawing calls used to
@@ -32,6 +32,6 @@
     <ProjectReference Include="..\VectorizeCommon\VectorizeCommon.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Grasshopper2" Version="9.0.26244.12303-beta" />
+    <PackageReference Include="Grasshopper2" Version="9.0.*-*" />
   </ItemGroup>
 </Project>
