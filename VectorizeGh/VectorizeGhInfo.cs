@@ -24,7 +24,7 @@ namespace VectorizeGh
     }
 
     // Return a short string describing the purpose of this GHA library.
-    public override string Description => "Vectorize plug-in for Grasshopper";
+    public override string Description => "Vectorize plug-in for Grasshopper®";
 
     public override Guid Id => new Guid("d6178c4c-21b8-4421-9487-9065a631d9c2");
 
@@ -32,6 +32,6 @@ namespace VectorizeGh
     public override string AuthorName => "Robert McNeel & Associates";
 
     // Return a string representing your preferred contact details.
-    public override string AuthorContact => "dale@mcneel.com";
+    public override string AuthorContact => "tech@mcneel.com";
   }
 }

@@ -19,9 +19,9 @@ namespace VectorizeGh2
     /// </summary>
     public override IIcon Icon => IconArt.Leaf;
     public override string Author => "Robert McNeel & Associates";
-    public override sealed string Copyright => $"Copyright © 2020-{DateTime.UtcNow.Year}, Robert McNeel & Associates";
-    public override string Contact => "dale@mcneel.com";
-    public override string Website => "https://www.food4rhino.com/en/app/vectorize";
+    public override sealed string Copyright => "Copyright © 2020-2026, Robert McNeel & Associates";
+    public override string Contact => "tech@mcneel.com";
+    public override string Website => "https://www.rhino3d.com";
     public override sealed string LicenceDescription => "GNU General Public License, version 2";
     public override sealed string LicenceAgreement => "GPL-2.0-or-later";
   }

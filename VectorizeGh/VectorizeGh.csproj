@@ -7,7 +7,7 @@
     <Company>Robert McNeel &amp; Associates</Company>
     <Copyright>Copyright © 2020-2026, Robert McNeel &amp; Associates</Copyright>
     <Product>Vectorize</Product>
-    <Description>Vectorize plug-in for Rhinoceros®</Description>
+    <Description>Vectorize plug-in for Grasshopper®</Description>
     <Version>9.0.26300.9401</Version>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
